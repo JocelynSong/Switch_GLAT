@@ -53,7 +53,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --max-update 300000 \
 --fp16 \
 --valid-subset valid \
---max-tokens-valid 128 \
+--max-tokens-valid 64 \
 --validate-interval 99999 \
 --save-interval 99999 \
 --validate-after-updates 3000 \

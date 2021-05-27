@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq/data/data_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/data/data_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq/data/dictionary.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/data/dictionary.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq/models/glat.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/models/glat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq/tasks/translation.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/tasks/translation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq_cli/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_transformer.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_transformer.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -65,7 +58,7 @@
       <workItem from="1621843315797" duration="246000" />
       <workItem from="1621843659828" duration="5436000" />
       <workItem from="1621934117810" duration="1154000" />
-      <workItem from="1622030141635" duration="8135000" />
+      <workItem from="1622030141635" duration="8429000" />
     </task>
     <servers />
   </component>
