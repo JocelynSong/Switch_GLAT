@@ -82,6 +82,10 @@ def main(cfg: FairseqConfig) -> None:
             )
             return
 
+    local_rank = cfg.distributed_training.device_id
+    cfg.task.data = cfg.task.data.split(",")
+    cfg.task.data = os.path.join(cfg.task.data[0], "rank{}".format(local_rank))
+
     # Setup task, e.g., translation, language modeling, etc.
     task = tasks.setup_task(cfg.task)
 
@@ -114,7 +118,7 @@ def main(cfg: FairseqConfig) -> None:
 
     # Load valid dataset (we load training data below, based on the latest checkpoint)
     # We load the valid dataset AFTER building the model
-    data_utils.raise_if_valid_subsets_unintentionally_ignored(cfg)
+    # data_utils.raise_if_valid_subsets_unintentionally_ignored(cfg)
     if cfg.dataset.combine_valid_subsets:
         task.load_dataset("valid", combine=True, epoch=1)
     else:

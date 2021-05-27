@@ -564,7 +564,6 @@ def get_bucketed_sizes(orig_sizes, buckets):
     return sizes
 
 
-
 def _find_extra_valid_paths(dataset_path: str) -> set:
     paths = utils.split_paths(dataset_path)
     all_valid_paths = set()

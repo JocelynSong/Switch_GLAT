@@ -35,6 +35,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --task translation \
 --source-lang ${src} \
 --target-lang ${tgt} \
+--dataset-impl "raw" \
 --criterion label_smoothed_cross_entropy --label-smoothing 0.1 \
 --arch transformer \
 --optimizer adam \

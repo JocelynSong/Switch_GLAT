@@ -12,7 +12,7 @@ from fairseq.modules.transformer_sentence_encoder import init_bert_params
 import torch
 from fairseq.models.nat.nonautoregressive_transformer import NATransformerDecoder, NATransformerModel
 import logging
-from lunanlp import torch_seed
+from fairseq.utils import torch_seed
 import random
 
 logger = logging.getLogger(__name__)

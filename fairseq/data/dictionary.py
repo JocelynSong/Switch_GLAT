@@ -6,6 +6,7 @@
 import os
 from collections import Counter
 from multiprocessing import Pool
+import tensorflow as tf
 
 import torch
 from fairseq import utils
@@ -225,15 +226,17 @@ class Dictionary:
         """
         if isinstance(f, str):
             try:
-                with open(PathManager.get_local_path(f), "r", encoding="utf-8") as fd:
-                    self.add_from_file(fd)
+                if not f.startswith("hdfs://"):
+                    with open(f, 'r', encoding='utf-8') as fd:
+                        self.add_from_file(fd)
+                else:
+                    with tf.io.gfile.GFile(f, 'r') as fd:
+                        self.add_from_file(fd)
             except FileNotFoundError as fnfe:
                 raise fnfe
             except UnicodeError:
-                raise Exception(
-                    "Incorrect encoding detected in {}, please "
-                    "rebuild the dataset".format(f)
-                )
+                raise Exception("Incorrect encoding detected in {}, please "
+                                "rebuild the dataset".format(f))
             return
 
         lines = f.readlines()
