@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/generate.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/setup.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run.sh" beforeDir="false" afterPath="$PROJECT_DIR$/run.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_transformer.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_transformer.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -58,7 +62,8 @@
       <workItem from="1621843315797" duration="246000" />
       <workItem from="1621843659828" duration="5436000" />
       <workItem from="1621934117810" duration="1154000" />
-      <workItem from="1622030141635" duration="8429000" />
+      <workItem from="1622030141635" duration="14152000" />
+      <workItem from="1622169489168" duration="3772000" />
     </task>
     <servers />
   </component>
@@ -70,7 +75,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

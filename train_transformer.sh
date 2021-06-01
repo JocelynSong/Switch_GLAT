@@ -1,11 +1,10 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 src=$1
 tgt=$2
 
 export http_proxy=http://lab_mt_caojun.sh:N92TPbyQoQfYkROb@10.124.155.170:8080
 export https_proxy=http://lab_mt_caojun.sh:N92TPbyQoQfYkROb@10.124.155.170:8080
-
 
 python3 setup.py build_ext --inplace
 pip install .
@@ -53,7 +52,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --max-update 300000 \
 --fp16 \
 --valid-subset valid \
---max-tokens-valid 64 \
+--max-sentences-valid 8 \
 --validate-interval 99999 \
 --save-interval 99999 \
 --validate-after-updates 3000 \
@@ -61,7 +60,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --save-interval-updates 3000 \
 --keep-interval-updates	10 \
 --eval-bleu \
---eval-bleu-args '{"beam": 5, "max_len_a": 1.2, "max_len_b": 10}' \
+--eval-bleu-args '{"beam": 5, "max_len_a": 1.0, "max_len_b": 200}' \
 --eval-bleu-detok moses \
 --eval-bleu-remove-bpe \
 --eval-bleu-print-samples \
