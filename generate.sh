@@ -19,7 +19,7 @@ mkdir -p $model_path
 remote_model_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_ten/transformer_base/${src}_${tgt}/checkpoint_best.pt
 hadoop fs -get $remote_model_path $model_path
 
-python3 generate.py ${data_path} \
+python3 fairseq_cli/generate.py ${data_path} \
 --task "translation" \
 --dataset-impl "raw" \
 --source-lang ${src} \

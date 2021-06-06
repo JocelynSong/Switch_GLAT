@@ -119,6 +119,7 @@ class Trainer(object):
         self._warn_once = set()
         self._wrapped_criterion = None
         self._wrapped_model = None
+        self.step_size = 0
 
         # TODO(myleott): support tpu
         if self.cuda and self.data_parallel_world_size > 1:
@@ -566,24 +567,13 @@ class Trainer(object):
     def get_train_iterator(
         self,
         epoch,
-        combine=True,
-        load_dataset=True,
-        data_selector=None,
         shard_batch_itr=True,
         disable_iterator_cache=False,
     ):
         """Return an EpochBatchIterator over the training set for a given epoch."""
-        if load_dataset:
-            logger.info("loading train data for epoch {}".format(epoch))
-            self.task.load_dataset(
-                self.cfg.dataset.train_subset,
-                epoch=epoch,
-                combine=combine,
-                data_selector=data_selector,
-                tpu=self.tpu,
-            )
-        batch_iterator = self.task.get_batch_iterator(
-            dataset=self.task.dataset(self.cfg.dataset.train_subset),
+
+        lang_batch_iterator = self.task.get_multilingual_batch_iterator(
+            split=self.cfg.dataset.train_subset,
             max_tokens=self.cfg.dataset.max_tokens,
             max_sentences=self.cfg.dataset.batch_size,
             max_positions=utils.resolve_max_positions(
@@ -601,17 +591,18 @@ class Trainer(object):
             data_buffer_size=self.cfg.dataset.data_buffer_size,
             disable_iterator_cache=disable_iterator_cache,
         )
-        self.reset_dummy_batch(batch_iterator.first_batch)
-        return batch_iterator
+        self.reset_dummy_batch(lang_batch_iterator[lang_batch_iterator.keys[0]].first_batch)
+        return lang_batch_iterator
 
     def get_valid_iterator(
         self,
         subset,
+        pair,
         disable_iterator_cache=False,
     ):
         """Return an EpochBatchIterator over given validation subset for a given epoch."""
         batch_iterator = self.task.get_batch_iterator(
-            dataset=self.task.dataset(subset),
+            dataset=self.task.get_dataset(subset, pair),
             max_tokens=self.cfg.dataset.max_tokens_valid,
             max_sentences=self.cfg.dataset.batch_size_valid,
             max_positions=utils.resolve_max_positions(

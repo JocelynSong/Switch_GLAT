@@ -187,6 +187,79 @@ def save_checkpoint(cfg: CheckpointConfig, trainer, epoch_itr, val_loss):
             os.system("hadoop fs -rm %s" % old_chk)
 
 
+def save_checkpoint_multilingual(cfg: CheckpointConfig, trainer, epoch_itr, val_loss, pair, epoch):
+    pair_best = "{}_best".format(pair)
+
+    from fairseq import meters
+
+    def is_better(a, b):
+        return a >= b if cfg.maximize_best_checkpoint_metric else a <= b
+
+    # only one worker should attempt to create the required dir
+    if trainer.data_parallel_rank == 0:
+        os.makedirs(cfg.save_dir, exist_ok=True)
+
+    checkpoint_conds = collections.OrderedDict()
+    checkpoint_conds['checkpoint_{}_best.pt'.format(pair)] = (
+            val_loss is not None and
+            (not hasattr(save_checkpoint, pair_best) or is_better(val_loss, getattr(save_checkpoint, pair_best)))
+    )
+
+    prev_best = getattr(save_checkpoint, pair_best, val_loss)
+    if val_loss is not None:
+        best_function = max if cfg.maximize_best_checkpoint_metric else min
+        best_value = best_function(val_loss, prev_best)
+        setattr(save_checkpoint, pair_best, best_value)
+
+    if cfg.no_save:
+        return
+
+    trainer.consolidate_optimizer()  # TODO(SS): do we need this if no_save_optimizer_state
+
+    if not trainer.should_save_checkpoint_on_current_rank:
+        if trainer.always_call_state_dict_during_save_checkpoint:
+            trainer.state_dict()
+        return
+
+    write_timer = meters.StopwatchMeter()
+    write_timer.start()
+
+    updates = trainer.get_num_updates()
+
+    extra_state = {"train_iterator": epoch_itr.state_dict(),
+                   "val_loss": val_loss}
+    if hasattr(save_checkpoint, pair_best):
+        extra_state.update({'best': getattr(save_checkpoint, pair_best)})
+
+    checkpoints = [
+        os.path.join(cfg.save_dir, fn) for fn, cond in checkpoint_conds.items() if cond
+    ]
+    if len(checkpoints) > 0:
+        trainer.save_checkpoint(checkpoints[0], extra_state)
+        for cp in checkpoints[1:]:
+            if cfg.write_checkpoints_asynchronously:
+                # TODO[ioPath]: Need to implement a delayed asynchronous
+                # file copying/moving feature.
+                logger.warning(
+                    f"ioPath is not copying {checkpoints[0]} to {cp} "
+                    "since async write mode is on."
+                )
+            else:
+                assert PathManager.copy(
+                    checkpoints[0], cp, overwrite=True
+                ), f"Failed to copy {checkpoints[0]} to {cp}"
+
+        for checkpoint_path in checkpoints:
+            os.system("hadoop fs -put -f %s %s" % (checkpoint_path, cfg.remote_save_dir))
+
+        write_timer.stop()
+        logger.info(
+            "Saved checkpoint {} (epoch {} @ {} updates, score {}) (writing took {} seconds)".format(
+                checkpoints[0], epoch, updates, val_loss, write_timer.sum
+            )
+        )
+
+
 def load_checkpoint(cfg: CheckpointConfig, trainer, **passthrough_args):
     """
     Load a checkpoint and restore the training iterator.
@@ -265,12 +338,12 @@ def load_checkpoint(cfg: CheckpointConfig, trainer, **passthrough_args):
         # restore iterator from checkpoint
         itr_state = extra_state["train_iterator"]
         epoch_itr = trainer.get_train_iterator(
-            epoch=itr_state["epoch"], load_dataset=True, **passthrough_args
+            epoch=itr_state["epoch"], **passthrough_args
         )
-        epoch_itr.load_state_dict(itr_state)
+        # epoch_itr.load_state_dict(itr_state)
     else:
         epoch_itr = trainer.get_train_iterator(
-            epoch=1, load_dataset=True, **passthrough_args
+            epoch=1, **passthrough_args
         )
 
     trainer.lr_step(epoch_itr.epoch)

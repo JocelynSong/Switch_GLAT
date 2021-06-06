@@ -79,7 +79,7 @@ class LabelSmoothedDualImitationCriterion(FairseqCriterion):
     def _custom_loss(self, loss, name="loss", factor=1.0):
         return {"name": name, "loss": loss, "factor": factor}
 
-    def forward(self, model, sample, reduce=True):
+    def forward(self, model, sample, reduce=True, src_lang=None, tgt_lang=None):
         """Compute the loss for the given sample.
         Returns a tuple with three elements:
         1) the loss
@@ -99,7 +99,7 @@ class LabelSmoothedDualImitationCriterion(FairseqCriterion):
         else:
             glat = None
 
-        outputs = model(src_tokens, src_lengths, prev_output_tokens, tgt_tokens, glat)
+        outputs = model(src_tokens, src_lengths, prev_output_tokens, tgt_tokens, glat, src_lang, tgt_lang)
         losses, nll_loss = [], []
 
         for obj in outputs:

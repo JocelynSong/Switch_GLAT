@@ -4,7 +4,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import math
-
 import torch
 from fairseq.models.transformer import (
     TransformerDecoder,
@@ -168,3 +167,4 @@ class FairseqNATDecoder(TransformerDecoder):
     def __init__(self, args, dictionary, embed_tokens, no_encoder_attn=False):
         super().__init__(args, dictionary, embed_tokens, no_encoder_attn)
         self.ensemble_models = None
+
