@@ -34,7 +34,7 @@ class MultilingualGlatTranslationConfig(TranslationConfig):
     )
     total_sample_updates: int = field(
         default=300000,
-        metadata={"help": "Total updates number for mglat training sampling"}
+        metadata={"help": "Total updates number for mglat glancing sampling"}
     )
     minus_p: float = field(
         default=0.2,
