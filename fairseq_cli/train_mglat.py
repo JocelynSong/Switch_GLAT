@@ -173,8 +173,10 @@ def main(cfg: FairseqConfig) -> None:
         if epoch_itr["epoch"] <= len(cfg.optimization.update_freq)
         else cfg.optimization.update_freq[-1]
     )
+
+    pair_list = cfg.task.mt_steps.split(",")
     iter_dict = {}
-    for pair in cfg.task.mt_steps.split(","):
+    for pair in pair_list:
         langs = pair.split("-")
         src_lang, tgt_lang = langs[0].strip(), langs[1].strip()
 
@@ -226,6 +228,21 @@ def main(cfg: FairseqConfig) -> None:
         # only use first validation loss to update the learning rate
         lr = trainer.lr_step(epoch_itr["epoch"], valid_losses[cfg.task.metric_pair])
 
+        logger.info("Get new iterator")
+        epoch_itr = trainer.get_train_iterator(epoch_itr["epoch"])
+        for pair in pair_list:
+            langs = pair.split("-")
+            src_lang, tgt_lang = langs[0].strip(), langs[1].strip()
+
+            iter_dict[("mt", src_lang, tgt_lang)] = epoch_itr[("mt", src_lang, tgt_lang)].next_epoch_itr(
+                fix_batches_to_gpus=cfg.distributed_training.fix_batches_to_gpus,
+                shuffle=(epoch_itr["epoch"] > cfg.dataset.curriculum),
+            )
+            iter_dict[("mt", src_lang, tgt_lang)] = iterators.GroupedIterator(iter_dict[("mt", src_lang, tgt_lang)],
+                                                                              update_freq)
+            if cfg.common.tpu:
+                iter_dict[("mt", src_lang, tgt_lang)] = utils.tpu_data_loader(iter_dict[("mt", src_lang, tgt_lang)])
+
     train_meter.stop()
     logger.info("done training in {:.1f} seconds".format(train_meter.sum))
 
@@ -274,22 +291,22 @@ def train(
     """Train the model for one epoch and return validation losses."""
     # Initialize data iterator
     update_freq = (
-        cfg.optimization.update_freq[epoch_itr.epoch - 1]
-        if epoch_itr.epoch <= len(cfg.optimization.update_freq)
+        cfg.optimization.update_freq[epoch_itr["epoch"] - 1]
+        if epoch_itr["epoch"] <= len(cfg.optimization.update_freq)
         else cfg.optimization.update_freq[-1]
     )
 
     trainer.begin_epoch(epoch_itr["epoch"])
 
     valid_subsets = cfg.dataset.valid_subset.split(",")
-    logger.info("Start iterating over samples for epoch %d")
+    logger.info("Start iterating over samples for epoch %d" % epoch_itr["epoch"])
 
     trainer.step_size = 0
     while trainer.step_size < cfg.dataset.validate_after_updates:
         start_num_updates = trainer.get_num_updates()
         annealed_dropout = (max(0., 1. - float(start_num_updates) / cfg.task.annealing_total_num)) * cfg.model.dropout
-        trainer.get_model().encoder.dropout = annealed_dropout
-        trainer.get_model().decoder.dropout = annealed_dropout
+        trainer.get_model().encoder.update_dropout_rate(annealed_dropout)
+        trainer.get_model().decoder.update_dropout_rate(annealed_dropout)
 
         pair = random.choice(pair_list)
         langs = pair.split("-")
@@ -298,8 +315,8 @@ def train(
             samples = next(iter_dict[("mt", src_lang, tgt_lang)])
         except StopIteration:
             iter_dict[("mt", src_lang, tgt_lang)] = epoch_itr[("mt", src_lang, tgt_lang)].next_epoch_itr(
-                fix_batches_to_gpus=cfg.dataset.fix_batches_to_gpus,
-                shuffle=(epoch_itr["epoch"] >= cfg.dataset.curriculum))
+                fix_batches_to_gpus=cfg.distributed_training.fix_batches_to_gpus,
+                shuffle=(epoch_itr["epoch"] > cfg.dataset.curriculum))
 
             iter_dict[("mt", src_lang, tgt_lang)] = iterators.GroupedIterator(iter_dict[("mt", src_lang, tgt_lang)],
                                                                               update_freq)
@@ -307,17 +324,19 @@ def train(
         for sample in samples:
             sample["src_lang"] = src_lang
             sample["tgt_lang"] = tgt_lang
-        log_output = trainer.train_step(samples)
+
+        with metrics.aggregate("train_inner"):
+            log_output = trainer.train_step(samples)
 
         if log_output is not None:  # not OOM, overflow, ...
             # log mid-epoch stats
             num_updates = trainer.get_num_updates()
             if num_updates % cfg.common.log_interval == 0:
                 stats = get_training_stats(metrics.get_smoothed_values("train_inner"))
-                info = "Epoch=%d, Step=%d, Updates=%d, KD data steps: %s | " % (epoch_itr["epoch"], trainer.step_size,
-                                                                                trainer.get_num_updates(), pair)
+                info = "Epoch=%d, Step=%d, Updates=%d, KD data steps: %s" % (epoch_itr["epoch"], trainer.step_size + 1,
+                                                                              trainer.get_num_updates(), pair)
                 for key in stats.keys():
-                    info = "{}-{}: {}".format(info, key, stats[key])
+                    info = "{} |{}: {}".format(info, key, stats[key])
                 logger.info(info)
 
                 # reset mid-epoch stats after each log interval
@@ -336,10 +355,12 @@ def train(
     # stats = get_training_stats(metrics.get_smoothed_values("train"))
     info = "Epoch=%d, Valid BLEU " % (epoch_itr["epoch"])
     for pair in valid_losses.keys():
-        info = "{}-{}: {} ".format(info, pair, valid_losses[pair])
+        info = "{} |{}: {}".format(info, pair, valid_losses[pair])
+    logger.info(info)
+
     info = "Epoch=%d, Best Valid BLEU " % (epoch_itr["epoch"])
     for pair in best_valid_bleu.keys():
-        info = "{}-{}: {} ".format(info, pair, best_valid_bleu[pair])
+        info = "{} |{}: {}".format(info, pair, best_valid_bleu[pair])
     logger.info(info)
 
     # reset epoch-level meters
@@ -463,6 +484,8 @@ def validate(
     subset = subsets[0]
     for pair in pair_list:
         logger.info('begin validation on valid subset for pair'.format(pair))
+        langs = pair.split("-")
+        src_lang, tgt_lang = langs[0].strip(), langs[1].strip()
 
         # Initialize data iterator
         itr = trainer.get_valid_iterator(subset, pair).next_epoch_itr(
@@ -474,7 +497,7 @@ def validate(
             itr,
             log_format=cfg.common.log_format,
             log_interval=cfg.common.log_interval,
-            epoch=epoch_itr.epoch,
+            epoch=epoch_itr["epoch"],
             prefix=f"valid on '{subset}' subset",
             tensorboard_logdir=(
                 cfg.common.tensorboard_logdir
@@ -498,10 +521,14 @@ def validate(
             for i, sample in enumerate(progress):
                 if cfg.dataset.max_valid_steps is not None and i > cfg.dataset.max_valid_steps:
                     break
+
+                sample["src_lang"] = src_lang
+                sample["tgt_lang"] = tgt_lang
                 trainer.valid_step(sample)
 
         # log validation stats
         stats = get_valid_stats(cfg, trainer, agg.get_smoothed_values())
+        stats["pair"] = pair
 
         if hasattr(task, "post_validate"):
             task.post_validate(trainer.get_model(), stats, agg)

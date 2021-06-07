@@ -8,14 +8,14 @@ pip install .
 pip install sacremoses
 
 # Download and prepare the data
-data_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/total_data/wmt_en_de_fr_ro_ru_zh
-local_dataset_path=${data_path}/at_data
+data_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/total_data/wmt_en_de_fr/new_kd_keep_bpe
+local_dataset_path=${data_path}/at_target
 
 local_root=.
 output_path=${local_root}/output
 mkdir -p ${output_path}
 local_checkpoint_path=${output_path}/save_model
-hdfs_checkpoint_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_ten
+hdfs_checkpoint_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_en_de_fr
 remote_checkpoint_path=${hdfs_checkpoint_path}/many2many
 mkdir -p ${local_checkpoint_path}
 hadoop fs -mkdir -p ${hdfs_checkpoint_path}
@@ -30,8 +30,8 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --save-dir ${local_checkpoint_path} \
 --remote-save-dir ${remote_checkpoint_path} \
 --task multilingual_glat_translation \
---lgs "de-en-fr-ro-ru-zh" \
---mt-steps "de-en,en-de,en-fr,fr-en,en-ro,ro-en,en-ru,ru-en,en-zh,zh-en" \
+--lgs "de-en-fr" \
+--mt-steps "de-en,en-de,en-fr,fr-en" \
 --metric-pair "de-en" \
 --total-sample-updates 600000 \
 --minus-p 0.3 \

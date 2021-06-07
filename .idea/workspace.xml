@@ -2,10 +2,31 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/train_mglat.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fairseq/data/data_utils_fast.pyx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/train_mglat_en_de_fr.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/checkpoint_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/checkpoint_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/data/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/data/data_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/data/data_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/data/data_utils_fast.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/data/data_utils_fast_new.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/data/iterators.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/data/iterators.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/dataclass/configs.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/dataclass/configs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/models/hubert/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/models/hubert/hubert.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/models/hubert/hubert_asr.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/fairseq/models/multilingual_glat.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/models/multilingual_glat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/modules/fairseq_dropout.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/modules/fairseq_dropout.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/tasks/audio_pretraining.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/tasks/fairseq_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/tasks/fairseq_task.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/tasks/hubert_pretraining.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/fairseq/tasks/multilingual_glat_translation.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/tasks/multilingual_glat_translation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/tasks/simultaneous_translation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/tasks/speech_to_text.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/trainer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_data_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_data_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_mglat.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_mglat.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -71,7 +92,7 @@
       <workItem from="1621843659828" duration="5436000" />
       <workItem from="1621934117810" duration="1154000" />
       <workItem from="1622030141635" duration="14152000" />
-      <workItem from="1622169489168" duration="48258000" />
+      <workItem from="1622169489168" duration="81247000" />
     </task>
     <servers />
   </component>

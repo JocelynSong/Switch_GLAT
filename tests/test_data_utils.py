@@ -6,8 +6,8 @@
 import unittest
 
 import numpy as np
-from fairseq.data.data_utils_fast import batch_by_size_fn
-from fairseq.data.data_utils_fast import batch_by_size_vec
+from fairseq.data.data_utils_fast_new import batch_by_size_fn
+from fairseq.data.data_utils_fast_new import batch_by_size_vec
 
 
 class TestBatchBySize(unittest.TestCase):

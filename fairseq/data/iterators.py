@@ -324,7 +324,7 @@ class EpochBatchIterator(EpochBatchIterating):
             return "DUMMY"
 
     def __len__(self):
-        return int(math.ceil(len(self.frozen_batches) / float(self.num_shards)))
+        return len(self.frozen_batches)
 
     @property
     def n(self):
@@ -354,24 +354,16 @@ class EpochBatchIterator(EpochBatchIterating):
             set_dataset_epoch (bool, optional): update the wrapped Dataset with
                 the new epoch number (default: True).
         """
-        if self.disable_shuffling:
-            shuffle = False
-        self.epoch = self.next_epoch_idx
         if set_dataset_epoch and hasattr(self.dataset, "set_epoch"):
             self.dataset.set_epoch(self.epoch)
         if self._next_epoch_itr is not None:
             self._cur_epoch_itr = self._next_epoch_itr
             self._next_epoch_itr = None
         else:
-            if callable(self.batch_sampler):
-                # reset _frozen_batches to refresh the next epoch
-                self._frozen_batches = None
+            self.epoch += 1
             self._cur_epoch_itr = self._get_iterator_for_epoch(
-                self.epoch,
-                shuffle,
-                fix_batches_to_gpus=fix_batches_to_gpus,
+                self.epoch, shuffle, fix_batches_to_gpus=fix_batches_to_gpus,
             )
-        self.shuffle = shuffle
         return self._cur_epoch_itr
 
     def end_of_epoch(self) -> bool:
@@ -389,16 +381,10 @@ class EpochBatchIterator(EpochBatchIterating):
 
     def state_dict(self):
         """Returns a dictionary containing a whole state of the iterator."""
-        if self.end_of_epoch():
-            epoch = self.epoch + 1
-            iter_in_epoch = 0
-        else:
-            epoch = self.epoch
-            iter_in_epoch = self.iterations_in_epoch
         return {
             "version": 2,
-            "epoch": epoch,
-            "iterations_in_epoch": iter_in_epoch,
+            "epoch": self.epoch,
+            "iterations_in_epoch": self.iterations_in_epoch,
             "shuffle": self.shuffle,
         }
 

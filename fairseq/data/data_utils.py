@@ -291,7 +291,6 @@ def batch_by_size(
     """
     Yield mini-batches of indices bucketed by size. Batches may contain
     sequences of different lengths.
-
     Args:
         indices (List[int]): ordered list of dataset indices
         num_tokens_fn (callable): function that returns the number of tokens at
@@ -309,21 +308,62 @@ def batch_by_size(
             *required_batch_size_multiple* will be ignored (default: None).
     """
     try:
-        from fairseq.data.data_utils_fast import batch_by_size_fast
+        from fairseq.data.data_utils_fast import (
+            batch_by_size_fn,
+            batch_by_size_vec,
+            batch_fixed_shapes_fast,
+        )
     except ImportError:
         raise ImportError(
-            'Please build Cython components with: `pip install --editable .` '
-            'or `python setup.py build_ext --inplace`'
+            "Please build Cython components with: "
+            "`python setup.py build_ext --inplace`"
+        )
+    except ValueError:
+        raise ValueError(
+            "Please build (or rebuild) Cython components with `python setup.py build_ext --inplace`."
         )
 
-    max_tokens = max_tokens if max_tokens is not None else -1
+    # added int() to avoid TypeError: an integer is required
+    max_tokens = (
+        int(max_tokens) if max_tokens is not None else -1
+    )
     max_sentences = max_sentences if max_sentences is not None else -1
     bsz_mult = required_batch_size_multiple
 
-    if isinstance(indices, types.GeneratorType):
+    if not isinstance(indices, np.ndarray):
         indices = np.fromiter(indices, dtype=np.int64, count=-1)
 
-    return batch_by_size_fast(indices, num_tokens_fn, max_tokens, max_sentences, bsz_mult)
+    if num_tokens_vec is not None and not isinstance(num_tokens_vec, np.ndarray):
+        num_tokens_vec = np.fromiter(num_tokens_vec, dtype=np.int64, count=-1)
+
+    if fixed_shapes is None:
+        if num_tokens_vec is None:
+            return batch_by_size_fn(
+                indices,
+                num_tokens_fn,
+                max_tokens,
+                max_sentences,
+                bsz_mult,
+            )
+        else:
+            return batch_by_size_vec(
+                indices,
+                num_tokens_vec,
+                max_tokens,
+                max_sentences,
+                bsz_mult,
+            )
+
+    else:
+        fixed_shapes = np.array(fixed_shapes, dtype=np.int64)
+        sort_order = np.lexsort(
+            [
+                fixed_shapes[:, 1].argsort(),  # length
+                fixed_shapes[:, 0].argsort(),  # bsz
+            ]
+        )
+        fixed_shapes_sorted = fixed_shapes[sort_order]
+        return batch_fixed_shapes_fast(indices, num_tokens_fn, fixed_shapes_sorted)
 
 
 def post_process(sentence: str, symbol: str):

@@ -5,6 +5,7 @@
 
 import argparse
 import contextlib
+from contextlib import contextmanager
 import copy
 import importlib
 import logging
@@ -798,6 +799,7 @@ def reset_logging():
     root.addHandler(handler)
 
 
+@contextmanager
 def torch_seed(seed):
     state = torch.random.get_rng_state()
     state_cuda = torch.cuda.random.get_rng_state()

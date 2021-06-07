@@ -567,7 +567,7 @@ class Trainer(object):
     def get_train_iterator(
         self,
         epoch,
-        shard_batch_itr=True,
+        shard_batch_itr=False,
         disable_iterator_cache=False,
     ):
         """Return an EpochBatchIterator over the training set for a given epoch."""
@@ -591,7 +591,7 @@ class Trainer(object):
             data_buffer_size=self.cfg.dataset.data_buffer_size,
             disable_iterator_cache=disable_iterator_cache,
         )
-        self.reset_dummy_batch(lang_batch_iterator[lang_batch_iterator.keys[0]].first_batch)
+        self.reset_dummy_batch(lang_batch_iterator[list(lang_batch_iterator.keys())[0]].first_batch)
         return lang_batch_iterator
 
     def get_valid_iterator(
@@ -612,9 +612,9 @@ class Trainer(object):
             ignore_invalid_inputs=self.cfg.dataset.skip_invalid_size_inputs_valid_test,
             required_batch_size_multiple=self.cfg.dataset.required_batch_size_multiple,
             seed=self.cfg.common.seed,
-            num_shards=self.data_parallel_world_size,
-            shard_id=self.data_parallel_rank,
-            num_workers=self.cfg.dataset.num_workers,
+            num_shards=1,
+            shard_id=0,
+            num_workers=0,
             # always pass a fixed "epoch" to keep validation data consistent
             # across training epochs
             epoch=1,

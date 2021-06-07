@@ -78,7 +78,7 @@ class FairseqTask(object):
         return criterion.logging_outputs_can_be_summed()
 
     cfg: FairseqDataclass
-    datasets: Dict[str, FairseqDataset]
+    datasets: Dict[str, Any]
     dataset_to_epoch_iter: Dict[FairseqDataset, Any]
     state: StatefulContainer = None
 

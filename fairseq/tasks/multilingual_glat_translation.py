@@ -24,14 +24,10 @@ NOISE_CHOICES = ChoiceEnum(["random_delete", "random_mask", "no_noise", "full_ma
 @dataclass
 class MultilingualGlatTranslationConfig(TranslationConfig):
     noise: NOISE_CHOICES = field(
-        default="random_delete",
+        default="full_mask",
         metadata={
             "help": "type of noise"
         })
-    lgs: str = field(
-        default="de-en-fr-es-it",
-        metadata={"help": "Languages (lg1-lg2-... ex: en-fr-es-de-ar-...)"}
-    )
     total_sample_updates: int = field(
         default=300000,
         metadata={"help": "Total updates number for mglat glancing sampling"}
@@ -84,13 +80,6 @@ class MultilingualGlatTranslationTask(TranslationTask):
 
         paths = utils.split_paths(cfg.data)
         assert len(paths) > 0
-
-        # get all languages
-        cfg.langs = cfg.lgs.split('-')
-        assert len(cfg.langs) == len(set(cfg.langs)) >= 1
-        cfg.id2lang = {k: v for k, v in enumerate(sorted(cfg.langs))}
-        cfg.lang2id = {k: v for v, k in cfg.id2lang.items()}
-        cfg.n_langs = len(cfg.langs)
 
         # load dictionaries
         src_dict = cls.load_dictionary(os.path.join(paths[0], "dict.txt"))

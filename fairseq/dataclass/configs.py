@@ -387,7 +387,7 @@ class DistributedTrainingConfig(FairseqDataclass):
 @dataclass
 class DatasetConfig(FairseqDataclass):
     num_workers: int = field(
-        default=1, metadata={"help": "how many subprocesses to use for data loading"}
+        default=0, metadata={"help": "how many subprocesses to use for data loading"}
     )
     skip_invalid_size_inputs_valid_test: bool = field(
         default=False,

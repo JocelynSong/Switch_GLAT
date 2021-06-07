@@ -92,6 +92,9 @@ class MultilingualGLAT(FairseqNATModel):
             type=float,
             help="weights on the length prediction loss",
         )
+        parser.add_argument("--lgs", type=str,
+                            help="Languages (lg1-lg2-... ex: en-fr-es-de-ar-...)")
+
 
     @classmethod
     def build_encoder(cls, args, src_dict, embed_tokens):
@@ -216,8 +219,11 @@ class MultilingualNATEncoder(TransformerEncoder):
         super().__init__(args, dictionary, embed_tokens)
 
         embed_dim = embed_tokens.embedding_dim
-        self.n_langs = args.n_langs
-        self.lang2id = args.lang2id
+        lgs = args.lgs.split('-')
+        assert len(lgs) == len(set(lgs)) >= 1
+        self.id2lang = {k: v for k, v in enumerate(sorted(lgs))}
+        self.lang2id = {k: v for v, k in self.id2lang.items()}
+        self.n_langs = len(lgs)
         self.lang_embeddings = LangEmbedding(self.n_langs, embed_dim)
         self.ensemble_models = None
 
@@ -276,6 +282,8 @@ class MultilingualNATEncoder(TransformerEncoder):
 
         # encoder layers
         for layer in self.layers:
+            layer.dropout_module.update_dropout_rate(self.dropout_module.p)
+
             x = layer(
                 x, encoder_padding_mask=encoder_padding_mask if has_pads else None
             )
@@ -290,6 +298,7 @@ class MultilingualNATEncoder(TransformerEncoder):
             src_langs = src_tokens.clone().fill_(self.lang2id[src_lang])
             assert src_langs.size() == (bs, slen)
             lang_embeds = self.lang_embeddings(src_langs)
+            lang_embeds = lang_embeds.transpose(0, 1)  # [length, batch, embedding]
             x = x + lang_embeds
 
         # return lang embedding for length prediction
@@ -306,6 +315,9 @@ class MultilingualNATEncoder(TransformerEncoder):
             "src_lengths": [],
             "lang_embedding": [src_embedding, tgt_embedding],
         }
+
+    def update_dropout_rate(self, dropout):
+        self.dropout_module.update_dropout_rate(dropout)
 
 
 class MultilingualNATDecoder(FairseqNATDecoder):
@@ -325,8 +337,11 @@ class MultilingualNATDecoder(FairseqNATDecoder):
         self.src_embedding_copy = getattr(args, "src_embedding_copy", False)
         self.embed_length = Embedding(args.max_target_positions, self.encoder_embed_dim, None)
 
-        self.n_langs = args.n_langs
-        self.lang2id = args.lang2id
+        lgs = args.lgs.split('-')
+        assert len(lgs) == len(set(lgs)) >= 1
+        self.id2lang = {k: v for k, v in enumerate(sorted(lgs))}
+        self.lang2id = {k: v for v, k in self.id2lang.items()}
+        self.n_langs = len(lgs)
         self.lang_embeddings = LangEmbedding(self.n_langs, self.embed_dim)
 
     @ensemble_decoder
@@ -412,6 +427,7 @@ class MultilingualNATDecoder(FairseqNATDecoder):
 
         # decoder layers
         for i, layer in enumerate(self.layers):
+            layer.dropout_module.update_dropout_rate(self.dropout_module.p)
 
             # early exit from the decoder.
             if (early_exit is not None) and (i >= early_exit):
@@ -521,6 +537,9 @@ class MultilingualNATDecoder(FairseqNATDecoder):
                 length_tgt = pred_lengs
 
         return length_tgt
+
+    def update_dropout_rate(self, dropout):
+        self.dropout_module.update_dropout_rate(dropout)
 
 
 @register_model_architecture(
