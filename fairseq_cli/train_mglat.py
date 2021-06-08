@@ -416,26 +416,8 @@ def validate_and_save(
             f"stop_time_hours: {cfg.optimization.stop_time_hours} hour(s)"
         )
 
-    do_save = (
-        (end_of_epoch and epoch_itr["epoch"] % cfg.checkpoint.save_interval == 0)
-        or should_stop
-        or (
-            cfg.checkpoint.save_interval_updates > 0
-            and num_updates > 0
-            and num_updates % cfg.checkpoint.save_interval_updates == 0
-            and num_updates >= cfg.dataset.validate_after_updates
-        )
-    )
-    do_validate = (
-        (not end_of_epoch and do_save)  # validate during mid-epoch saves
-        or (end_of_epoch and epoch_itr["epoch"] % cfg.dataset.validate_interval == 0)
-        or should_stop
-        or (
-            cfg.dataset.validate_interval_updates > 0
-            and num_updates > 0
-            and num_updates % cfg.dataset.validate_interval_updates == 0
-        )
-    ) and not cfg.dataset.disable_validation and num_updates >= cfg.dataset.validate_after_updates
+    do_save = True
+    do_validate = True
 
     # Validate
     valid_losses = dict()
