@@ -40,7 +40,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --arch MGLAT_base \
 --noise full_mask \
 --optimizer adam \
---adam-betas '(0.9, 0.999)' \
+--adam-betas '(0.9, 0.999)' --adam-eps 1e-6 \
 --clip-norm 2 \
 --lr 5e-4 \
 --lr-scheduler inverse_sqrt \

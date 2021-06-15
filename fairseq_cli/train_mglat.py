@@ -200,6 +200,9 @@ def main(cfg: FairseqConfig) -> None:
     for pair in pair_list:
         best_valid_bleu[pair] = 0
 
+    ratio_list_level1 = [0.25, 0.25, 0.25, 0.25]
+    ratio_list_level2 = [0.17, 0.17, 0.33, 0.33]
+
     while epoch_itr["epoch"] <= max_epoch:
         if lr <= cfg.optimization.stop_min_lr:
             logger.info(
@@ -209,9 +212,15 @@ def main(cfg: FairseqConfig) -> None:
             )
             break
 
+        # set sampling ratio
+        if best_valid_bleu["en-de"] - 24.0 < 1e-6 and epoch_itr["epoch"] < 200:
+            ratio_list = ratio_list_level1
+        else:
+            ratio_list = ratio_list_level2
+
         # train for one epoch
         valid_losses, should_stop, best_valid_bleu = train(cfg, trainer, task, epoch_itr, iter_dict, pair_list,
-                                                           best_valid_bleu)
+                                                           best_valid_bleu, ratio_list)
 
         logger.info("Save original checkpoints")
         langs = cfg.task.metric_pair.split("-")
@@ -286,8 +295,8 @@ def should_stop_early(cfg: DictConfig, valid_loss: float) -> bool:
 
 @metrics.aggregate("train")
 def train(
-    cfg: DictConfig, trainer: Trainer, task: tasks.FairseqTask, epoch_itr, iter_dict, pair_list, best_valid_bleu
-) -> Tuple[dict, bool, dict]:
+    cfg: DictConfig, trainer: Trainer, task: tasks.FairseqTask, epoch_itr, iter_dict, pair_list, best_valid_bleu,
+        ratio_list) -> Tuple[dict, bool, dict]:
     """Train the model for one epoch and return validation losses."""
     # Initialize data iterator
     update_freq = (
@@ -308,7 +317,7 @@ def train(
         trainer.get_model().encoder.update_dropout_rate(annealed_dropout)
         trainer.get_model().decoder.update_dropout_rate(annealed_dropout)
 
-        pair = random.choice(pair_list)
+        pair = np.random.choice(pair_list, 1, p=ratio_list)[0]
         langs = pair.split("-")
         src_lang, tgt_lang = langs[0].strip(), langs[1].strip()
         try:
