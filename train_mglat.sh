@@ -16,7 +16,7 @@ output_path=${local_root}/output
 mkdir -p ${output_path}
 local_checkpoint_path=${output_path}/save_model
 hdfs_checkpoint_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_ten
-remote_checkpoint_path=${hdfs_checkpoint_path}/many2many
+remote_checkpoint_path=${hdfs_checkpoint_path}/many2many_new
 mkdir -p ${local_checkpoint_path}
 hadoop fs -mkdir -p ${hdfs_checkpoint_path}
 hadoop fs -mkdir -p ${remote_checkpoint_path}
@@ -40,7 +40,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --arch MGLAT_base \
 --noise full_mask \
 --optimizer adam \
---adam-betas '(0.9, 0.999)' \
+--adam-betas '(0.9, 0.999)' --adam-eps 1e-6 \
 --clip-norm 2 \
 --lr 5e-4 \
 --lr-scheduler inverse_sqrt \

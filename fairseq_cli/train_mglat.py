@@ -200,8 +200,8 @@ def main(cfg: FairseqConfig) -> None:
     for pair in pair_list:
         best_valid_bleu[pair] = 0
 
-    ratio_list_level1 = [0.25, 0.25, 0.25, 0.25]
-    ratio_list_level2 = [0.17, 0.17, 0.33, 0.33]
+    ratio_list_level1 = None
+    ratio_list_level2 = [0.0833, 0.0833, 0.1612, 0.1612, 0.0461, 0.0461, 0.0703, 0.0703, 0.1391, 0.1391]
 
     while epoch_itr["epoch"] <= max_epoch:
         if lr <= cfg.optimization.stop_min_lr:
@@ -213,7 +213,7 @@ def main(cfg: FairseqConfig) -> None:
             break
 
         # set sampling ratio
-        if best_valid_bleu["en-de"] - 24.0 < 1e-6 and epoch_itr["epoch"] < 200:
+        if best_valid_bleu["en-de"] - 24.0 < 1e-6 and epoch_itr["epoch"] < 300:
             ratio_list = ratio_list_level1
         else:
             ratio_list = ratio_list_level2
@@ -317,7 +317,10 @@ def train(
         trainer.get_model().encoder.update_dropout_rate(annealed_dropout)
         trainer.get_model().decoder.update_dropout_rate(annealed_dropout)
 
-        pair = np.random.choice(pair_list, 1, p=ratio_list)[0]
+        if ratio_list:
+            pair = np.random.choice(pair_list, 1, p=ratio_list)[0]
+        else:
+            pair = random.choice(ratio_list)
         langs = pair.split("-")
         src_lang, tgt_lang = langs[0].strip(), langs[1].strip()
         try:
