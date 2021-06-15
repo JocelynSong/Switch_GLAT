@@ -320,7 +320,7 @@ def train(
         if ratio_list:
             pair = np.random.choice(pair_list, 1, p=ratio_list)[0]
         else:
-            pair = random.choice(ratio_list)
+            pair = random.choice(pair_list)
         langs = pair.split("-")
         src_lang, tgt_lang = langs[0].strip(), langs[1].strip()
         try:

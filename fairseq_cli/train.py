@@ -186,7 +186,7 @@ def main(cfg: FairseqConfig) -> None:
         # only use first validation loss to update the learning rate
         lr = trainer.lr_step(epoch_itr.epoch, valid_losses[0])
 
-        epoch_itr = trainer.get_train_iterator(
+        epoch_itr = trainer.get_single_train_iterator(
             epoch_itr.next_epoch_idx,
             # sharded data: get train iterator for next epoch
             load_dataset=task.has_sharded_data("train"),
@@ -428,7 +428,7 @@ def validate(
         logger.info('begin validation on "{}" subset'.format(subset))
 
         # Initialize data iterator
-        itr = trainer.get_valid_iterator(subset).next_epoch_itr(
+        itr = trainer.get_single_valid_iterator(subset).next_epoch_itr(
             shuffle=False, set_dataset_epoch=False  # use a fixed valid set
         )
         if cfg.common.tpu:
