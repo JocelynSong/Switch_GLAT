@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/train_transformer_tpu.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/run_tpu.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/trainer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq_cli/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_transformer_tpu.sh" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -74,7 +72,7 @@
       <workItem from="1622030141635" duration="14152000" />
       <workItem from="1622169489168" duration="85581000" />
       <workItem from="1623218587686" duration="5855000" />
-      <workItem from="1623735813585" duration="7406000" />
+      <workItem from="1623735813585" duration="12516000" />
     </task>
     <servers />
   </component>
