@@ -42,7 +42,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --optimizer adam \
 --adam-betas '(0.9, 0.999)' --adam-eps 1e-6 \
 --clip-norm 2 \
---lr 5e-3 \
+--lr 1e-3 \
 --lr-scheduler inverse_sqrt \
 --stop-min-lr 1e-9 \
 --warmup-updates 4000 \
@@ -66,7 +66,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --log-interval 10 \
 --eval-bleu \
 --eval-bleu-args '{"iter_decode_max_iter": 0, "iter_decode_with_beam": 5}' \
---eval-bleu-detok moses \
+--eval-bleu-detok space \
 --eval-bleu-remove-bpe \
 --eval-bleu-print-samples \
 --best-checkpoint-metric bleu \

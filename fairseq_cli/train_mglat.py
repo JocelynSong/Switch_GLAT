@@ -45,6 +45,14 @@ logging.basicConfig(
 logger = logging.getLogger("fairseq_cli.train")
 
 
+def get_ratio_list(starting_ratio_list, T):
+    alpha = 1.0 / T
+    new_list = np.power(starting_ratio_list, alpha)
+    new_list = new_list / np.sum(new_list)
+    new_list[-1] = 1.0 - np.sum(new_list[: -1])
+    return new_list
+
+
 def main(cfg: FairseqConfig) -> None:
     if isinstance(cfg, argparse.Namespace):
         cfg = convert_namespace_to_omegaconf(cfg)
@@ -200,8 +208,9 @@ def main(cfg: FairseqConfig) -> None:
     for pair in pair_list:
         best_valid_bleu[pair] = 0
 
-    ratio_list_level1 = None
-    ratio_list_level2 = [0.0833, 0.0833, 0.1612, 0.1612, 0.0461, 0.0461, 0.0703, 0.0703, 0.1391, 0.1391]
+    # ratio_list_level1 = None
+    # ratio_list_level2 = [0.0833, 0.0833, 0.1612, 0.1612, 0.0461, 0.0461, 0.0703, 0.0703, 0.1391, 0.1391]
+    starting_ratio_list = np.array([0.0308, 0.0308, 0.2769, 0.2769, 0.0043, 0.0043, 0.0176, 0.0176, 0.1704, 0.1704])
 
     while epoch_itr["epoch"] <= max_epoch:
         if lr <= cfg.optimization.stop_min_lr:
@@ -213,10 +222,12 @@ def main(cfg: FairseqConfig) -> None:
             break
 
         # set sampling ratio
-        if best_valid_bleu["en-de"] - 24.0 < 1e-6 and epoch_itr["epoch"] < 300:
-            ratio_list = ratio_list_level1
-        else:
-            ratio_list = ratio_list_level2
+        # if best_valid_bleu["en-de"] - 24.0 < 1e-6 and epoch_itr["epoch"] < 300:
+        #     ratio_list = ratio_list_level1
+        # else:
+        #     ratio_list = ratio_list_level2
+        current_t = min(5.0, 1.0 + (epoch_itr["epoch"] / 5.0) * 4.0)
+        ratio_list = get_ratio_list(starting_ratio_list, current_t)
 
         # train for one epoch
         valid_losses, should_stop, best_valid_bleu = train(cfg, trainer, task, epoch_itr, iter_dict, pair_list,

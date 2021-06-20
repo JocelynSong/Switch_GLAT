@@ -61,7 +61,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --keep-interval-updates	10 \
 --eval-bleu \
 --eval-bleu-args '{"beam": 5, "max_len_a": 1.0, "max_len_b": 200}' \
---eval-bleu-detok moses \
+--eval-bleu-detok space \
 --eval-bleu-remove-bpe \
 --eval-bleu-print-samples \
 --best-checkpoint-metric bleu \

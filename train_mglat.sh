@@ -16,7 +16,7 @@ output_path=${local_root}/output
 mkdir -p ${output_path}
 local_checkpoint_path=${output_path}/save_model
 hdfs_checkpoint_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_ten
-remote_checkpoint_path=${hdfs_checkpoint_path}/many2many_all_shuffle
+remote_checkpoint_path=${hdfs_checkpoint_path}/many2many_schedule
 mkdir -p ${local_checkpoint_path}
 hadoop fs -mkdir -p ${hdfs_checkpoint_path}
 hadoop fs -mkdir -p ${remote_checkpoint_path}
@@ -66,7 +66,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --log-interval 10 \
 --eval-bleu \
 --eval-bleu-args '{"iter_decode_max_iter": 0, "iter_decode_with_beam": 5}' \
---eval-bleu-detok moses \
+--eval-bleu-detok space \
 --eval-bleu-remove-bpe \
 --eval-bleu-print-samples \
 --best-checkpoint-metric bleu \
