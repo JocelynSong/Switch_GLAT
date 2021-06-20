@@ -199,6 +199,81 @@ class MultilingualGlatTranslationTask(TranslationTask):
         self.iterator["epoch"] = epoch
         return self.iterator
 
+    def get_single_pair_batch_iterator(
+        self,
+        pair,
+        split,
+        max_tokens=None,
+        max_sentences=None,
+        max_positions=None,
+        ignore_invalid_inputs=False,
+        required_batch_size_multiple=1,
+        seed=1,
+        num_shards=1,
+        shard_id=0,
+        num_workers=0,
+        epoch=1,
+        data_buffer_size=0,
+        disable_iterator_cache=False,
+    ):
+        """
+        Get an iterator that yields batches of data from the given dataset.
+
+        Args:
+            pair: language pair to create a new iterator
+            split (~fairseq.data.FairseqDataset): dataset to batch
+            max_tokens (int, optional): max number of tokens in each batch
+                (default: None).
+            max_sentences (int, optional): max number of sentences in each
+                batch (default: None).
+            max_positions (optional): max sentence length supported by the
+                model (default: None).
+            ignore_invalid_inputs (bool, optional): don't raise Exception for
+                sentences that are too long (default: False).
+            required_batch_size_multiple (int, optional): require batch size to
+                be a multiple of N (default: 1).
+            seed (int, optional): seed for random number generator for
+                reproducibility (default: 1).
+            num_shards (int, optional): shard the data iterator into N
+                shards (default: 1).
+            shard_id (int, optional): which shard of the data iterator to
+                return (default: 0).
+            num_workers (int, optional): how many subprocesses to use for data
+                loading. 0 means the data will be loaded in the main process
+                (default: 0).
+            epoch (int, optional): the epoch to start the iterator from
+                (default: 1).
+            data_buffer_size (int, optional): number of batches to
+                preload (default: 0).
+            disable_iterator_cache (bool, optional): don't cache the
+                EpochBatchIterator (ignores `FairseqTask::can_reuse_epoch_itr`)
+                (default: False).
+        Returns:
+            ~fairseq.iterators.EpochBatchIterator: a batched iterator over the
+                given dataset split
+        """
+        logger.info("Run end of data iterator! Get iterator for pair %s" % pair)
+
+        batch_iterator = self.get_batch_iterator(
+            dataset=self.datasets["para"][split][pair],
+            max_tokens=max_tokens,
+            max_sentences=max_sentences,
+            max_positions=max_positions,
+            ignore_invalid_inputs=ignore_invalid_inputs,
+            required_batch_size_multiple=required_batch_size_multiple,
+            seed=seed,
+            num_shards=num_shards,
+            shard_id=shard_id,
+            num_workers=num_workers,
+            epoch=epoch,
+            data_buffer_size=data_buffer_size,
+            disable_iterator_cache=disable_iterator_cache,
+        )
+        langs = pair.split("-")
+        src_lang, tgt_lang = langs[0].strip(), langs[1].strip()
+        self.iterator[("mt", src_lang, tgt_lang)] = batch_iterator
+        return batch_iterator
+
     def get_dataset(self, split, pair):
         """
         Return a loaded dataset split.

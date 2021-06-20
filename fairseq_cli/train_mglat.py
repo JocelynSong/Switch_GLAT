@@ -237,21 +237,6 @@ def main(cfg: FairseqConfig) -> None:
         # only use first validation loss to update the learning rate
         lr = trainer.lr_step(epoch_itr["epoch"], valid_losses[cfg.task.metric_pair])
 
-        logger.info("Get new iterator")
-        epoch_itr = trainer.get_train_iterator(epoch_itr["epoch"])
-        for pair in pair_list:
-            langs = pair.split("-")
-            src_lang, tgt_lang = langs[0].strip(), langs[1].strip()
-
-            iter_dict[("mt", src_lang, tgt_lang)] = epoch_itr[("mt", src_lang, tgt_lang)].next_epoch_itr(
-                fix_batches_to_gpus=cfg.distributed_training.fix_batches_to_gpus,
-                shuffle=(epoch_itr["epoch"] > cfg.dataset.curriculum),
-            )
-            iter_dict[("mt", src_lang, tgt_lang)] = iterators.GroupedIterator(iter_dict[("mt", src_lang, tgt_lang)],
-                                                                              update_freq)
-            if cfg.common.tpu:
-                iter_dict[("mt", src_lang, tgt_lang)] = utils.tpu_data_loader(iter_dict[("mt", src_lang, tgt_lang)])
-
     train_meter.stop()
     logger.info("done training in {:.1f} seconds".format(train_meter.sum))
 
@@ -326,12 +311,19 @@ def train(
         try:
             samples = next(iter_dict[("mt", src_lang, tgt_lang)])
         except StopIteration:
+            new_data_iter_epoch = epoch_itr[("mt", src_lang, tgt_lang)].epoch + 1
+            del epoch_itr[("mt", src_lang, tgt_lang)]
+            del iter_dict[("mt", src_lang, tgt_lang)]
+
+            epoch_itr[("mt", src_lang, tgt_lang)] = trainer.get_single_pair_train_iterator(pair, new_data_iter_epoch)
             iter_dict[("mt", src_lang, tgt_lang)] = epoch_itr[("mt", src_lang, tgt_lang)].next_epoch_itr(
                 fix_batches_to_gpus=cfg.distributed_training.fix_batches_to_gpus,
                 shuffle=(epoch_itr["epoch"] > cfg.dataset.curriculum))
-
             iter_dict[("mt", src_lang, tgt_lang)] = iterators.GroupedIterator(iter_dict[("mt", src_lang, tgt_lang)],
                                                                               update_freq)
+            if cfg.common.tpu:
+                iter_dict[("mt", src_lang, tgt_lang)] = utils.tpu_data_loader(iter_dict[("mt", src_lang, tgt_lang)])
+
             samples = next(iter_dict[("mt", src_lang, tgt_lang)])
         for sample in samples:
             sample["src_lang"] = src_lang

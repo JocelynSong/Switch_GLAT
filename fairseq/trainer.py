@@ -594,6 +594,36 @@ class Trainer(object):
         self.reset_dummy_batch(lang_batch_iterator[list(lang_batch_iterator.keys())[0]].first_batch)
         return lang_batch_iterator
 
+    def get_single_pair_train_iterator(
+        self,
+        pair,
+        epoch,
+        shard_batch_itr=False,
+        disable_iterator_cache=False,
+    ):
+        """Return an EpochBatchIterator over the training set for a given epoch."""
+
+        return self.task.get_single_pair_batch_iterator(
+            pair=pair,
+            split=self.cfg.dataset.train_subset,
+            max_tokens=self.cfg.dataset.max_tokens,
+            max_sentences=self.cfg.dataset.batch_size,
+            max_positions=utils.resolve_max_positions(
+                self.task.max_positions(),
+                self.model.max_positions(),
+                self.cfg.dataset.max_tokens,
+            ),
+            ignore_invalid_inputs=True,
+            required_batch_size_multiple=self.cfg.dataset.required_batch_size_multiple,
+            seed=self.cfg.common.seed,
+            num_shards=self.data_parallel_world_size if shard_batch_itr else 1,
+            shard_id=self.data_parallel_rank if shard_batch_itr else 0,
+            num_workers=self.cfg.dataset.num_workers,
+            epoch=epoch,
+            data_buffer_size=self.cfg.dataset.data_buffer_size,
+            disable_iterator_cache=disable_iterator_cache,
+        )
+
     def get_valid_iterator(
         self,
         subset,
