@@ -154,7 +154,7 @@ def main(cfg: FairseqConfig) -> None:
 
     # Load the latest checkpoint if one is available and restore the
     # corresponding train iterator
-    extra_state, epoch_itr = checkpoint_utils.load_checkpoint(
+    extra_state, epoch_itr = checkpoint_utils.load_single_pair_checkpoint(
         cfg.checkpoint,
         trainer,
         # don't cache epoch iterators for sharded datasets

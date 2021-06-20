@@ -660,7 +660,7 @@ class Trainer(object):
         combine=True,
         load_dataset=True,
         data_selector=None,
-        shard_batch_itr=True,
+        shard_batch_itr=False,
         disable_iterator_cache=False,
     ):
         """Return an EpochBatchIterator over the training set for a given epoch."""
