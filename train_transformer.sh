@@ -59,6 +59,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --validate-interval-updates 3000 \
 --save-interval-updates 3000 \
 --keep-interval-updates	10 \
+--log-interval 10 \
 --eval-bleu \
 --eval-bleu-args '{"beam": 5, "max_len_a": 1.0, "max_len_b": 200}' \
 --eval-bleu-detok space \

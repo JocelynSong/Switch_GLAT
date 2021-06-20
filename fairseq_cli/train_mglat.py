@@ -313,10 +313,11 @@ def train(
         trainer.get_model().encoder.update_dropout_rate(annealed_dropout)
         trainer.get_model().decoder.update_dropout_rate(annealed_dropout)
 
-        if ratio_list:
-            pair = np.random.choice(pair_list, 1, p=ratio_list)[0]
-        else:
-            pair = random.choice(pair_list)
+        # if ratio_list:
+        #     pair = np.random.choice(pair_list, 1, p=ratio_list)[0]
+        # else:
+        #     pair = random.choice(pair_list)
+        pair = np.random.choice(pair_list, 1, p=ratio_list)[0]
         langs = pair.split("-")
         src_lang, tgt_lang = langs[0].strip(), langs[1].strip()
         try:
