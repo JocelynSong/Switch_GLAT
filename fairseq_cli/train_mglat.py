@@ -226,7 +226,7 @@ def main(cfg: FairseqConfig) -> None:
         #     ratio_list = ratio_list_level1
         # else:
         #     ratio_list = ratio_list_level2
-        current_t = min(5.0, 1.0 + (epoch_itr["epoch"] / 5.0) * 4.0)
+        current_t = min(3.33, 1.0 + (epoch_itr["epoch"] / 50.0) * 2.33)
         ratio_list = get_ratio_list(starting_ratio_list, current_t)
 
         # train for one epoch
