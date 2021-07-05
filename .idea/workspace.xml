@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/generate_mglat.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_mglat.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_mglat.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -72,7 +71,10 @@
       <workItem from="1622030141635" duration="14152000" />
       <workItem from="1622169489168" duration="85581000" />
       <workItem from="1623218587686" duration="5855000" />
-      <workItem from="1623735813585" duration="31843000" />
+      <workItem from="1623735813585" duration="37056000" />
+      <workItem from="1625389164672" duration="2084000" />
+      <workItem from="1625464706896" duration="592000" />
+      <workItem from="1625469786318" duration="1803000" />
     </task>
     <servers />
   </component>
