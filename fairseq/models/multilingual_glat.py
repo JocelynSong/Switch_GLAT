@@ -142,6 +142,38 @@ class MultilingualGLAT(FairseqNATModel):
             history=history,
         )
 
+    def forward_decoder_diffusion_data(self, decoder_out, encoder_out, decoding_format=None, src_lang=None,
+                                       tgt_lang=None, diffusion_lang=None, percentage=0.1):
+        step = decoder_out.step
+        output_tokens = decoder_out.output_tokens
+        output_scores = decoder_out.output_scores
+        history = decoder_out.history
+
+        # execute the decoder
+        output_masks = output_tokens.ne(self.pad)
+        _scores, _tokens = self.decoder.forward_diffusion_data(
+            normalize=True,
+            prev_output_tokens=output_tokens,
+            encoder_out=encoder_out,
+            step=step,
+            src_lang=src_lang,
+            tgt_lang=tgt_lang,
+            diffusion_lang=diffusion_lang,
+            percentage=percentage
+        ).max(-1)
+
+        output_tokens.masked_scatter_(output_masks, _tokens[output_masks])
+        output_scores.masked_scatter_(output_masks, _scores[output_masks])
+        if history is not None:
+            history.append(output_tokens.clone())
+
+        return decoder_out._replace(
+            output_tokens=output_tokens,
+            output_scores=output_scores,
+            attn=None,
+            history=history,
+        )
+
     def forward(
         self, src_tokens, src_lengths, prev_output_tokens, tgt_tokens, glat=None, src_lang=None, tgt_lang=None,
             **kwargs):
@@ -457,6 +489,128 @@ class MultilingualNATDecoder(FairseqNATDecoder):
 
         if tgt_lang is not None:
             tgt_langs = prev_output_tokens.clone().fill_(self.lang2id[tgt_lang])
+            assert tgt_langs.size() == (bsz, seq_len)
+            lang_embeds = self.lang_embeddings(tgt_langs)  # [B, T, C]
+            x = x + lang_embeds
+
+        if self.project_out_dim is not None:
+            x = self.project_out_dim(x)
+
+        return x, {"attn": attn, "inner_states": inner_states}
+
+    @ensemble_decoder
+    def forward_diffusion_data(self, normalize, encoder_out, prev_output_tokens, step=0, src_lang=None, tgt_lang=None,
+                               diffusion_lang=None, percentage=0.1):
+        features, _ = self.diffusion_extract_features(
+            prev_output_tokens,
+            encoder_out=encoder_out,
+            embedding_copy=(step == 0) & self.src_embedding_copy,
+            src_lang=src_lang, tgt_lang=tgt_lang, diffusion_lang=diffusion_lang, percentage=percentage)
+
+        decoder_out = self.output_layer(features)
+        return F.log_softmax(decoder_out, -1) if normalize else decoder_out
+
+    def diffusion_extract_features(
+        self,
+        prev_output_tokens,
+        encoder_out=None,
+        early_exit=None,
+        embedding_copy=False,
+        src_lang=None,
+        tgt_lang=None,
+        diffusion_lang=None,
+        percentage=None,
+    ):
+        """
+        Similar to *forward* but only return features.
+
+        Inputs:
+            prev_output_tokens: Tensor(B, T)
+            encoder_out: a dictionary of hidden states and masks
+
+        Returns:
+            tuple:
+                - the decoder's features of shape `(batch, tgt_len, embed_dim)`
+                - a dictionary with any model-specific outputs
+            the LevenshteinTransformer decoder has full-attention to all generated tokens
+        """
+        bsz, seq_len = prev_output_tokens.size()
+
+        # embedding
+        if embedding_copy:
+            src_embd = encoder_out["encoder_embedding"][0]
+            if len(encoder_out["encoder_padding_mask"]) > 0:
+                src_mask = encoder_out["encoder_padding_mask"][0]
+            else:
+                src_mask = None
+            src_mask = (
+                ~src_mask
+                if src_mask is not None
+                else prev_output_tokens.new_ones(*src_embd.size()[:2]).bool()
+            )
+
+            x, decoder_padding_mask = self.forward_embedding(
+                prev_output_tokens,
+                self.forward_copying_source(
+                    src_embd, src_mask, prev_output_tokens.ne(self.padding_idx)
+                ),
+            )
+
+        else:
+            x, decoder_padding_mask = self.forward_embedding(prev_output_tokens)
+
+        # B x T x C -> T x B x C
+        x = x.transpose(0, 1)
+        attn = None
+        inner_states = [x]
+
+        # decoder layers
+        for i, layer in enumerate(self.layers):
+            layer.dropout_module.update_dropout_rate(self.dropout_module.p)
+
+            # early exit from the decoder.
+            if (early_exit is not None) and (i >= early_exit):
+                break
+
+            x, attn, _ = layer(
+                x,
+                encoder_out["encoder_out"][0]
+                if (encoder_out is not None and len(encoder_out["encoder_out"]) > 0)
+                else None,
+                encoder_out["encoder_padding_mask"][0]
+                if (
+                    encoder_out is not None
+                    and len(encoder_out["encoder_padding_mask"]) > 0
+                )
+                else None,
+                self_attn_mask=None,
+                self_attn_padding_mask=decoder_padding_mask,
+            )
+            inner_states.append(x)
+
+        if self.layer_norm:
+            x = self.layer_norm(x)
+
+        # T x B x C -> B x T x C
+        x = x.transpose(0, 1)
+
+        # mask input to get diffusion data & create mask symbol
+        input_mask = torch.ones_like(decoder_padding_mask)
+        seq_lens = seq_len - decoder_padding_mask.sum(dim=1)
+
+        for i in range(bsz):
+            sample_len = int(seq_lens[i] * percentage)
+            if sample_len <= 0:
+                continue
+            samples = random.sample(range(seq_lens[i]), sample_len)
+            for sample in samples:
+                input_mask[i][sample] = 0
+
+        input_mask = input_mask.eq(0)  # 1 for mask & 0 for original other tokens
+        if tgt_lang is not None:
+            tgt_langs = prev_output_tokens.clone().fill_(self.lang2id[tgt_lang])
+            diffusion_lang_id = self.lang2id[diffusion_lang]
+            tgt_langs = tgt_langs.masked_fill(input_mask, diffusion_lang_id)
             assert tgt_langs.size() == (bsz, seq_len)
             lang_embeds = self.lang_embeddings(tgt_langs)  # [B, T, C]
             x = x + lang_embeds

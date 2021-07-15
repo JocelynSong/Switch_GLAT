@@ -334,6 +334,63 @@ class IndexedRawTextDataset(FairseqDataset):
                 return False
 
 
+class SampledIndexedRawTextDataset(FairseqDataset):
+    """Takes a text file as input and binarizes it in memory at instantiation.
+    Original lines are also kept in memory"""
+
+    def __init__(self, sampled_sent_list, append_eos=True, reverse_order=False):
+        self.tokens_list = []
+        self.lines = []
+        self.sizes = []
+        self.append_eos = append_eos
+        self.reverse_order = reverse_order
+        self.construct_dataset_from_samples(sampled_sent_list)
+        self.size = len(self.tokens_list)
+
+    def construct_dataset_from_samples(self, token_lists):
+        for sentence in token_lists:
+            self.tokens_list.append(sentence)
+            self.sizes.append(len(sentence))
+
+        self.sizes = np.array(self.sizes)
+
+    def check_index(self, i):
+        if i < 0 or i >= self.size:
+            raise IndexError('index out of range')
+
+    def __getitem__(self, i):
+        self.check_index(i)
+        return self.tokens_list[i]
+
+    def get_original_text(self, i):
+        self.check_index(i)
+        return self.lines[i]
+
+    def __del__(self):
+        pass
+
+    def __len__(self):
+        return self.size
+
+    def num_tokens(self, index):
+        return self.sizes[index]
+
+    def size(self, index):
+        return self.sizes[index]
+
+    @staticmethod
+    def exists(path):
+        if not path.startswith("hdfs://"):
+            return os.path.exists(path)
+        else:
+            command = "hadoop fs -test -e {};echo $?".format(path)
+            command_output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE).communicate()
+            if '1' not in str(command_output[0]):
+                return True
+            else:
+                return False
+
+
 class IndexedDatasetBuilder:
     element_sizes = {
         np.uint8: 1,

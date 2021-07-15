@@ -48,6 +48,34 @@ class MultilingualGlatTranslationConfig(TranslationConfig):
         default=1200000,
         metadata={"help": "Total number of dropout annealing"}
     )
+    diffusion_num: int = field(
+        default=300000,
+        metadata={"help": "the number of generated diffusion data"}
+    )
+    diffusion_steps: str = field(
+        default="de-en-fr",
+        metadata={"help": "diffusion steps for the second stage training"}
+    )
+    diffusion_percentage: float = field(
+        default=0.1,
+        metadata={"help": "masked rate for the diffused words"}
+    )
+    diffusion_max_sentence: int = field(
+        default=8,
+        metadata={"help": "batch size for generating diffusion sentence"}
+    )
+    diffusion_length_beam: int = field(
+        default=7,
+        metadata={"help": "length beam for generating diffusion sentence"}
+    )
+    output_translation_path: str = field(
+        default="",
+        metadata={"help": "output path for generated diffusion data"}
+    )
+    hdfs_save_path: str = field(
+        default="",
+        metadata={"help": "Saved hdfs path for generated diffusion data"}
+    )
 
 
 logger = logging.getLogger(__name__)
@@ -482,4 +510,13 @@ class MultilingualGlatTranslationTask(TranslationTask):
         with torch.no_grad():
             return generator.generate(
                 models, sample, prefix_tokens=prefix_tokens, src_lang=src_lang, tgt_lang=tgt_lang
+            )
+
+    def generate_diffusion_step(
+        self, generator, models, sample, prefix_tokens=None, src_lang=None, tgt_lang=None, diffusion_lang=None,
+            percentage=0.1):
+        with torch.no_grad():
+            return generator.generate_diffusion_data(
+                models, sample, prefix_tokens=prefix_tokens, src_lang=src_lang, tgt_lang=tgt_lang,
+                diffusion_lang=diffusion_lang, percentage=percentage
             )

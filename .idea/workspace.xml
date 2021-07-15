@@ -2,8 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/generate_mglat.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fairseq_cli/generate_diffusion_data.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fairseq_cli/generate_mglat.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/data/dictionary.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/data/dictionary.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/data/indexed_dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/data/indexed_dataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/iterative_refinement_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/iterative_refinement_generator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/tasks/multilingual_glat_translation.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/tasks/multilingual_glat_translation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_mglat.sh" beforeDir="false" afterPath="$PROJECT_DIR$/generate_mglat.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -74,7 +80,10 @@
       <workItem from="1623735813585" duration="37056000" />
       <workItem from="1625389164672" duration="2084000" />
       <workItem from="1625464706896" duration="592000" />
-      <workItem from="1625469786318" duration="1803000" />
+      <workItem from="1625469786318" duration="2771000" />
+      <workItem from="1625482187007" duration="24931000" />
+      <workItem from="1625730709989" duration="96000" />
+      <workItem from="1625751084403" duration="3390000" />
     </task>
     <servers />
   </component>

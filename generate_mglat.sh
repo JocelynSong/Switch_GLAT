@@ -1,5 +1,12 @@
 #!/bin/bash
 
+export http_proxy=http://lab_mt_caojun.sh:N92TPbyQoQfYkROb@10.124.155.170:8080
+export https_proxy=http://lab_mt_caojun.sh:N92TPbyQoQfYkROb@10.124.155.170:8080
+
+python3 setup.py build_ext --inplace
+pip3 install .
+pip3 install sacremoses
+
 src=$1
 tgt=$2
 
@@ -17,15 +24,16 @@ mkdir -p $model_path
 remote_model_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_ten/many2many_all_shuffle/checkpoint_${src}-${tgt}_best.pt
 hadoop fs -get $remote_model_path $model_path
 
-python3 fairseq_cli/generate.py ${data_path} \
+python3 fairseq_cli/generate_mglat.py ${data_path} \
 --task "multilingual_glat_translation" \
 --dataset-impl "raw" \
 --source-lang ${src} \
 --target-lang ${tgt} \
---path output/checkpoint_${src}-${tgt}_best.pt \
---batch-size 8 \
---beam 5 \
---nbest 5 \
+--mt-steps ${src}-${tgt} \
+--path output/checkpoint_${src}-${tgt}_best.pt:output/checkpoint_best.pt \
+--iter-decode-with-external-reranker \
+--batch-size 20 \
+--iter-decode-with-beam 7 \
 --max-len-a 1 \
 --max-len-b 200 \
 --results-path ${generation_path} \
@@ -36,3 +44,5 @@ python3 fairseq_cli/generate.py ${data_path} \
 
 
 # hadoop fs -put -f ${generation_path}/${src}-${tgt}.txt $remote_path
+# --path output/checkpoint_${src}-${tgt}_best.pt:at.pt \
+# --iter-decode-with-external-reranker \
