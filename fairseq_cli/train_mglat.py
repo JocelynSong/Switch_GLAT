@@ -222,7 +222,7 @@ def main(cfg: FairseqConfig) -> None:
             break
 
         # set sampling ratio
-        if best_valid_bleu["en-de"] - 24.0 < 1e-6 and epoch_itr["epoch"] < 200:
+        if best_valid_bleu["en-de"] - 24.0 < 1e-6 and epoch_itr["epoch"] < 250:
             ratio_list = ratio_list_level1
         else:
             ratio_list = ratio_list_level2

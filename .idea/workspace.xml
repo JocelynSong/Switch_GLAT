@@ -3,7 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/models/multilingual_glat.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/models/multilingual_glat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generate_diffusion_data.sh" beforeDir="false" afterPath="$PROJECT_DIR$/generate_diffusion_data.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_mglat.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_mglat.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -78,6 +81,8 @@
       <workItem from="1625482187007" duration="24931000" />
       <workItem from="1625730709989" duration="96000" />
       <workItem from="1625748531820" duration="951000" />
+      <workItem from="1626925838362" duration="709000" />
+      <workItem from="1627468802565" duration="1533000" />
     </task>
     <servers />
   </component>
@@ -98,4 +103,3 @@
     </option>
   </component>
 </project>
-

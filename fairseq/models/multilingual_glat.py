@@ -304,6 +304,13 @@ class MultilingualNATEncoder(TransformerEncoder):
         if has_pads:
             x = x * (1 - encoder_padding_mask.unsqueeze(-1).type_as(x))
 
+        # adding language embedding for the first layer
+        if src_lang is not None:
+            src_langs = src_tokens.clone().fill_(self.lang2id[src_lang])
+            assert src_langs.size() == (bs, slen)
+            lang_embeds = self.lang_embeddings(src_langs)  # [batch, length, embedding]
+            x = x + lang_embeds
+
         # B x T x C -> T x B x C
         x = x.transpose(0, 1)
 
@@ -451,6 +458,13 @@ class MultilingualNATDecoder(FairseqNATDecoder):
 
         else:
             x, decoder_padding_mask = self.forward_embedding(prev_output_tokens)
+
+        # adding language embedding for the first layer
+        if tgt_lang is not None:
+            tgt_langs = prev_output_tokens.clone().fill_(self.lang2id[tgt_lang])
+            assert tgt_langs.size() == (bsz, seq_len)
+            lang_embeds = self.lang_embeddings(tgt_langs)  # [B, T, C]
+            x = x + lang_embeds
 
         # B x T x C -> T x B x C
         x = x.transpose(0, 1)
