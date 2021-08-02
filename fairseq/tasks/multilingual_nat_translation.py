@@ -82,7 +82,7 @@ logger = logging.getLogger(__name__)
 
 
 @register_task("multilingual_nat_translation", dataclass=MultilingualGlatTranslationConfig)
-class MultilingualGlatTranslationTask(TranslationTask):
+class MultilingualNATTranslationTask(TranslationTask):
     """
     Translation (Sequence Generation) task for Levenshtein Transformer
     See `"Levenshtein Transformer" <https://arxiv.org/abs/1905.11006>`_.

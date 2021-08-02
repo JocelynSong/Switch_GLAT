@@ -15,8 +15,8 @@ local_root=.
 output_path=${local_root}/output
 mkdir -p ${output_path}
 local_checkpoint_path=${output_path}/save_model
-hdfs_checkpoint_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/multilingual_nat
-remote_checkpoint_path=${hdfs_checkpoint_path}/vanilla_MNAT_en_fr_zh
+hdfs_checkpoint_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_en_fr_zh
+remote_checkpoint_path=${hdfs_checkpoint_path}/mglat_en_fr_zh_better_new
 mkdir -p ${local_checkpoint_path}
 hadoop fs -mkdir -p ${hdfs_checkpoint_path}
 hadoop fs -mkdir -p ${remote_checkpoint_path}
@@ -29,8 +29,8 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --master_addr=$ARNOLD_WORKER_0_HOST --master_port=$ARNOLD_WORKER_0_PORT fairseq_cli/train_mglat.py ${local_dataset_path} \
 --save-dir ${local_checkpoint_path} \
 --remote-save-dir ${remote_checkpoint_path} \
---task multilingual_nat_translation \
---lgs "en-fr-zh" \
+--task multilingual_glat_translation \
+--lgs "de-fr-zh" \
 --mt-steps "en-fr,fr-en,en-zh,zh-en" \
 --metric-pair "fr-en" \
 --total-sample-updates 600000 \

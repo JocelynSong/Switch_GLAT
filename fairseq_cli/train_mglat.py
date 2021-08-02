@@ -45,6 +45,10 @@ logging.basicConfig(
 logger = logging.getLogger("fairseq_cli.train")
 
 
+starting_pair_ratio = {"en-zh": 2513.6, "zh-en": 2513.6, "en-de": 456.2, "de-en": 456.2, "en-fr": 4084.2,
+                       "fr-en": 4084.2}
+
+
 def get_ratio_list(starting_ratio_list, T):
     alpha = 1.0 / T
     new_list = np.power(starting_ratio_list, alpha)
@@ -209,8 +213,10 @@ def main(cfg: FairseqConfig) -> None:
         best_valid_bleu[pair] = 0
 
     ratio_list_level1 = None
-    ratio_list_level2 = [0.0833, 0.0833, 0.1612, 0.1612, 0.0461, 0.0461, 0.0703, 0.0703, 0.1391, 0.1391]
-    # starting_ratio_list = np.array([0.0308, 0.0308, 0.2769, 0.2769, 0.0043, 0.0043, 0.0176, 0.0176, 0.1704, 0.1704])
+    # ratio_list_level2 = [0.0833, 0.0833, 0.1612, 0.1612, 0.0461, 0.0461, 0.0703, 0.0703, 0.1391, 0.1391]
+    sample_pair_list = [starting_pair_ratio[k] for k in pair_list]
+    ratio_list_level2 = [k / sum(sample_pair_list) for k in sample_pair_list]
+    ratio_list_level2 = get_ratio_list(ratio_list_level2, 3.33)
 
     while epoch_itr["epoch"] <= max_epoch:
         if lr <= cfg.optimization.stop_min_lr:
@@ -222,7 +228,7 @@ def main(cfg: FairseqConfig) -> None:
             break
 
         # set sampling ratio
-        if best_valid_bleu["en-de"] - 24.0 < 1e-6 and epoch_itr["epoch"] < 250:
+        if epoch_itr["epoch"] < 200:
             ratio_list = ratio_list_level1
         else:
             ratio_list = ratio_list_level2
