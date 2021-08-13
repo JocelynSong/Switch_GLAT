@@ -319,7 +319,7 @@ def train(
         trainer.get_model().encoder.update_dropout_rate(annealed_dropout)
         trainer.get_model().decoder.update_dropout_rate(annealed_dropout)
 
-        if ratio_list:
+        if ratio_list is not None:
             pair = np.random.choice(pair_list, 1, p=ratio_list)[0]
         else:
             pair = random.choice(pair_list)

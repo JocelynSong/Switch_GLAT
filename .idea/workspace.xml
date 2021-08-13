@@ -2,12 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/train_mglat_en_fr_zh.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq/tasks/multilingual_nat_translation.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/tasks/multilingual_nat_translation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_mglat_en_de_fr.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_mglat_en_de_fr.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_multiligual_nat.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_multiligual_nat.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_diffusion_data.sh" beforeDir="false" afterPath="$PROJECT_DIR$/generate_diffusion_data.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -86,6 +83,14 @@
       <workItem from="1627468802565" duration="7880000" />
       <workItem from="1627874186672" duration="50000" />
       <workItem from="1627874247202" duration="1436000" />
+      <workItem from="1627880898401" duration="1149000" />
+      <workItem from="1627900908346" duration="4584000" />
+      <workItem from="1628146886672" duration="853000" />
+      <workItem from="1628158619903" duration="559000" />
+      <workItem from="1628241504413" duration="1859000" />
+      <workItem from="1628496409648" duration="501000" />
+      <workItem from="1628577928663" duration="40000" />
+      <workItem from="1628836361152" duration="524000" />
     </task>
     <servers />
   </component>
