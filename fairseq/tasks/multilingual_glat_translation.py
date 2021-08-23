@@ -77,7 +77,7 @@ class MultilingualGlatTranslationConfig(TranslationConfig):
         metadata={"help": "Saved hdfs path for generated diffusion data"}
     )
     diffusion_data_path: str = field(
-        default=None,
+        default="",
         metadata={"help": "Data path for diffusion data"}
     )
     diffusion_generation_interval: int = field(
@@ -89,7 +89,7 @@ class MultilingualGlatTranslationConfig(TranslationConfig):
         metadata={"help": "train a duffusion step every N steps"}
     )
     vanilla_model_bleu: str = field(
-        default=None,
+        default="",
         metadata={"help": "validation bleu scores for vanilla model, based on which mglat will be trained continuously"}
     )
     enable_back_translation: bool = field(
@@ -97,16 +97,16 @@ class MultilingualGlatTranslationConfig(TranslationConfig):
         metadata={"help": "whether use the back-translation dara in training"}
     )
     back_translation_steps: str = field(
-        default=None,
-        metadata={"training steps for back-translation"}
+        default="",
+        metadata={"help": "training steps for back-translation"}
     )
     back_translation_path: str = field(
-        default=None,
-        metadata={"back translation data path"}
+        default="",
+        metadata={"help": "back translation data path"}
     )
     back_translation_interval: int = field(
         default=4,
-        metadata={"run one back_translation step every N steps"}
+        metadata={"help": "run one back_translation step every N steps"}
     )
     enable_lazy_loader: bool = field(
         default=False,
