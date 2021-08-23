@@ -58,6 +58,9 @@ def load_langpair_dataset(
     shuffle=True,
     pad_to_multiple=1,
     prepend_bos_src=None,
+    epoch=1,
+    buffer_size=1000000,
+    enable_lazy_load=False
 ):
     def split_exists(split, src, tgt, lang, data_path):
         filename = os.path.join(data_path, '{}.{}-{}.{}.pth'.format(split, src, tgt, lang))
@@ -83,10 +86,12 @@ def load_langpair_dataset(
                 )
 
         src_datasets.append(
-            data_utils.load_indexed_dataset(prefix + src + ".pth", src_dict, dataset_impl)
+            data_utils.load_indexed_dataset(prefix + src + ".pth", src_dict, dataset_impl, epoch=epoch,
+                                            buffer_size=buffer_size, enable_lazy_load=enable_lazy_load)
         )
         tgt_datasets.append(
-            data_utils.load_indexed_dataset(prefix + tgt + ".pth", tgt_dict, dataset_impl)
+            data_utils.load_indexed_dataset(prefix + tgt + ".pth", tgt_dict, dataset_impl, epoch=epoch,
+                                            buffer_size=buffer_size, enable_lazy_load=enable_lazy_load)
         )
 
         logger.info(

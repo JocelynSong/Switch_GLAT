@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from math import log
 import torch
 from fairseq import utils
-from fairseq.data import LanguagePairDataset
+from fairseq.data import LanguagePairDataset, BufferedIndexedRawTextDataset, IndexedRawTextDataset
 from fairseq.dataclass import ChoiceEnum
 from fairseq.tasks import register_task
 from fairseq.tasks.translation import TranslationConfig, TranslationTask, load_langpair_dataset
@@ -41,7 +41,7 @@ class MultilingualGlatTranslationConfig(TranslationConfig):
         metadata={"help": "multilingual machine translation steps"}
     )
     metric_pair: str = field(
-        default="de-en",
+        default="",
         metadata={"help": "metric language pair for early stop"}
     )
     annealing_total_num: int = field(
@@ -65,7 +65,7 @@ class MultilingualGlatTranslationConfig(TranslationConfig):
         metadata={"help": "batch size for generating diffusion sentence"}
     )
     diffusion_length_beam: int = field(
-        default=7,
+        default=5,
         metadata={"help": "length beam for generating diffusion sentence"}
     )
     output_translation_path: str = field(
@@ -75,6 +75,50 @@ class MultilingualGlatTranslationConfig(TranslationConfig):
     hdfs_save_path: str = field(
         default="",
         metadata={"help": "Saved hdfs path for generated diffusion data"}
+    )
+    diffusion_data_path: str = field(
+        default=None,
+        metadata={"help": "Data path for diffusion data"}
+    )
+    diffusion_generation_interval: int = field(
+        default=50,
+        metadata={"help": "Frequency for changing a diffusion data split with a different diffusion rsate"}
+    )
+    diffusion_interval: int = field(
+        default=5,
+        metadata={"help": "train a duffusion step every N steps"}
+    )
+    vanilla_model_bleu: str = field(
+        default=None,
+        metadata={"help": "validation bleu scores for vanilla model, based on which mglat will be trained continuously"}
+    )
+    enable_back_translation: bool = field(
+        default=False,
+        metadata={"help": "whether use the back-translation dara in training"}
+    )
+    back_translation_steps: str = field(
+        default=None,
+        metadata={"training steps for back-translation"}
+    )
+    back_translation_path: str = field(
+        default=None,
+        metadata={"back translation data path"}
+    )
+    back_translation_interval: int = field(
+        default=4,
+        metadata={"run one back_translation step every N steps"}
+    )
+    enable_lazy_loader: bool = field(
+        default=False,
+        metadata={"help": "whether use the lazy data loader"}
+    )
+    buffer_size: int = field(
+        default=1000000,
+        metadata={"help": "buffer size for using lazy data loader"}
+    )
+    lazy_load_interval: int = field(
+        default=30,
+        metadata={"help": "interval for loading another buffered data"}
     )
 
 
@@ -95,6 +139,7 @@ class MultilingualGlatTranslationTask(TranslationTask):
 
         self.datasets["para"] = dict()
         self.datasets["para"]["train"], self.datasets["para"]["valid"], self.datasets["para"]["test"] = {}, {}, {}
+        self.datasets["diffusion"], self.datasets["back_trans"] = {}, {}
         # data iterators
         self.iterator = {}
 
@@ -121,15 +166,17 @@ class MultilingualGlatTranslationTask(TranslationTask):
 
         return cls(cfg, src_dict, tgt_dict)
 
-    def load_para_dataset(self, split, pair, epoch=1, combine=False, **kwargs):
-        """Load a given dataset split.
+    def load_para_dataset(self, split, pair, epoch=1, combine=False, buffer_size=1000000, enable_lazy_load=False,
+                          **kwargs):
+        """
+        Load a given dataset split.
 
         Args:
             split (str): name of the split (e.g., train, valid, test)
         """
         paths = utils.split_paths(self.cfg.data)
         assert len(paths) > 0
-        data_path = paths[(epoch - 1) % len(paths)]
+        data_path = paths[0]
 
         # compute langcode
         langs = pair.split("-")
@@ -150,7 +197,71 @@ class MultilingualGlatTranslationTask(TranslationTask):
             max_source_positions=self.cfg.max_source_positions,
             max_target_positions=self.cfg.max_target_positions,
             prepend_bos=True,
+            epoch=epoch,
+            buffer_size=buffer_size,
+            enable_lazy_load=enable_lazy_load
         )
+
+    def load_back_translation_dataset(self, back_translation_path, pair, epoch=1, buffer_size=1000000,
+                                      enable_lazy_load=False):
+        """
+        Load a given dataset split.
+
+        Args:
+             back_translation_path(str): path of back-translation data
+        """
+        def get_indexed_dataset(path, cur_epoch, back_buffer_size, dictionary):
+            if enable_lazy_load:
+                return BufferedIndexedRawTextDataset(path, cur_epoch, back_buffer_size)
+            else:
+                return IndexedRawTextDataset(path, dictionary)
+
+        langs = pair.split("-")
+        src_lang, tgt_lang = langs[0].strip(), langs[1].strip()
+
+        prefix = os.path.join(back_translation_path, "back.{}.".format(pair))
+        src_dataset = get_indexed_dataset(prefix + src_lang + ".pth", epoch, buffer_size, self.src_dict)
+        tgt_dataset = get_indexed_dataset(prefix + tgt_lang + ".pth", epoch, buffer_size, self.tgt_dict)
+
+        logger.info("loading back translation data for pair %s: %d" % (pair, len(src_dataset)))
+        self.datasets["back_trans"][pair] = LanguagePairDataset(
+            src_dataset,
+            src_dataset.sizes,
+            self.src_dict,
+            tgt_dataset,
+            tgt_dataset.sizes,
+            self.tgt_dict,
+            left_pad_source=self.cfg.left_pad_source,
+            left_pad_target=self.cfg.left_pad_target,
+            shuffle=True)
+
+    def load_diffusion_dataset(self, diffusion_path, diffusion_step):
+        """
+        Load a given dataset split.
+
+        Args:
+             diffusion_path(str): path of back-translation data
+             diffusion_step:
+        """
+        def get_indexed_dataset(path, dictionary):
+            return IndexedRawTextDataset(path, dictionary)
+
+        prefix = os.path.join(diffusion_path, "diffusion.{}.".format(diffusion_step))
+        src_dataset = get_indexed_dataset(prefix + "src.pth", self.src_dict)
+        tgt_dataset = get_indexed_dataset(prefix + "tgt.pth", self.tgt_dict)
+
+        logger.info("loading diffusion data for step %s: %d" % (diffusion_step, len(src_dataset)))
+
+        self.datasets["diffusion"][diffusion_step] = LanguagePairDataset(
+            src_dataset,
+            src_dataset.sizes,
+            self.src_dict,
+            tgt_dataset,
+            tgt_dataset.sizes,
+            self.tgt_dict,
+            left_pad_source=self.cfg.left_pad_source,
+            left_pad_target=self.cfg.left_pad_target,
+            shuffle=True)
 
     def get_multilingual_batch_iterator(
         self,
@@ -319,6 +430,40 @@ class MultilingualGlatTranslationTask(TranslationTask):
         if not isinstance(self.datasets["para"][split][pair], FairseqDataset):
             raise TypeError('Datasets are expected to be of type FairseqDataset')
         return self.datasets["para"][split][pair]
+
+    def get_back_trans_dataset(self, pair):
+        """
+        Return a loaded back-translation dataset split.
+
+        Args:
+            pair: specific language or data-pair
+
+        Returns:
+            a :class:`~fairseq.data.FairseqDataset` corresponding to *split*
+        """
+        from fairseq.data import FairseqDataset
+        if pair not in self.datasets["back_trans"]:
+            raise KeyError('{} Dataset not loaded: {}'.format("back-translation", pair))
+        if not isinstance(self.datasets["back_trans"][pair], FairseqDataset):
+            raise TypeError('Datasets are expected to be of type FairseqDataset')
+        return self.datasets["back_trans"][pair]
+
+    def get_diffusion_dataset(self, diffusion_step):
+        """
+        Return a loaded diffusion dataset split.
+
+        Args:
+            diffusion_step: specific diffusion data to load
+
+        Returns:
+            a :class:`~fairseq.data.FairseqDataset` corresponding to *split*
+        """
+        from fairseq.data import FairseqDataset
+        if diffusion_step not in self.datasets["diffusion"]:
+            raise KeyError('{} Dataset not loaded: {}'.format("diffusion", diffusion_step))
+        if not isinstance(self.datasets["diffusion"][diffusion_step], FairseqDataset):
+            raise TypeError('Datasets are expected to be of type FairseqDataset')
+        return self.datasets["diffusion"][diffusion_step]
 
     def inject_noise(self, target_tokens):
         def _random_delete(target_tokens):

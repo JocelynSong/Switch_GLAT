@@ -2,8 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/fairseq_cli/train_mglat_diffusion.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/train_mglat_diffusion.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/data/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/data/data_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/data/data_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/data/indexed_dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/data/indexed_dataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/tasks/multilingual_glat_translation.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/tasks/multilingual_glat_translation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/tasks/translation.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/tasks/translation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generate_diffusion_data.sh" beforeDir="false" afterPath="$PROJECT_DIR$/generate_diffusion_data.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,6 +33,11 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
@@ -39,8 +50,8 @@
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/fairseq/tasks" />
       <recent name="$PROJECT_DIR$/fairseq_cli" />
+      <recent name="$PROJECT_DIR$/fairseq/tasks" />
       <recent name="$PROJECT_DIR$/fairseq/models" />
     </key>
   </component>
@@ -55,6 +66,58 @@
         </RuleState>
       </list>
     </option>
+  </component>
+  <component name="RunManager" selected="Python.trainer">
+    <configuration name="trainer" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="new_fairseq" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/fairseq" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/fairseq/trainer.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="translation" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="new_fairseq" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/fairseq/tasks" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/fairseq/tasks/translation.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.trainer" />
+        <item itemvalue="Python.translation" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -90,7 +153,7 @@
       <workItem from="1628241504413" duration="1859000" />
       <workItem from="1628496409648" duration="501000" />
       <workItem from="1628577928663" duration="40000" />
-      <workItem from="1628836361152" duration="524000" />
+      <workItem from="1628836361152" duration="37714000" />
     </task>
     <servers />
   </component>
@@ -109,5 +172,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/better_mglat$translation.coverage" NAME="translation Coverage Results" MODIFIED="1629428124585" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/fairseq/tasks" />
+    <SUITE FILE_PATH="coverage/better_mglat$trainer.coverage" NAME="trainer Coverage Results" MODIFIED="1629689068124" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/fairseq" />
   </component>
 </project>

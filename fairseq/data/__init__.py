@@ -23,6 +23,7 @@ from .indexed_dataset import (
     IndexedCachedDataset,
     IndexedDataset,
     IndexedRawTextDataset,
+    BufferedIndexedRawTextDataset,
     MMapIndexedDataset,
 )
 from .language_pair_dataset import LanguagePairDataset
@@ -85,6 +86,7 @@ __all__ = [
     "IndexedCachedDataset",
     "IndexedDataset",
     "IndexedRawTextDataset",
+    "BufferedIndexedRawTextDataset",
     "LanguagePairDataset",
     "LeftPadDataset",
     "ListDataset",

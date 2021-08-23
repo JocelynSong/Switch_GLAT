@@ -70,9 +70,10 @@ def collate_tokens(
         copy_tensor(v, res[i][size - len(v) :] if left_pad else res[i][: len(v)])
     return res
 
+
 def load_indexed_dataset(
-    path, dictionary=None, dataset_impl=None, combine=False, default="cached"
-):
+    path, dictionary=None, dataset_impl=None, combine=False, default="cached", epoch=1, buffer_size=1000000,
+    enable_lazy_load=False):
     """A helper function for loading indexed datasets.
 
     Args:
@@ -108,6 +109,9 @@ def load_indexed_dataset(
             impl=dataset_impl_k or default,
             fix_lua_indexing=True,
             dictionary=dictionary,
+            epoch=epoch,
+            buffer_size=buffer_size,
+            enable_lazy_load=enable_lazy_load
         )
         if dataset is None:
             break

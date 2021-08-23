@@ -71,10 +71,14 @@ def make_builder(out_file, impl, vocab_size=None):
         return IndexedDatasetBuilder(out_file)
 
 
-def make_dataset(path, impl, fix_lua_indexing=False, dictionary=None):
+def make_dataset(path, impl, fix_lua_indexing=False, dictionary=None, epoch=1, buffer_size=1000000,
+                 enable_lazy_load=False):
     if impl == "raw" and IndexedRawTextDataset.exists(path):
         assert dictionary is not None
-        return IndexedRawTextDataset(path, dictionary)
+        if enable_lazy_load:
+            return BufferedIndexedRawTextDataset(path, epoch, buffer_size)
+        else:
+            return IndexedRawTextDataset(path, dictionary)
     elif impl == "lazy" and IndexedDataset.exists(path):
         return IndexedDataset(path, fix_lua_indexing=fix_lua_indexing)
     elif impl == "cached" and IndexedDataset.exists(path):
@@ -295,6 +299,86 @@ class IndexedRawTextDataset(FairseqDataset):
                 self.tokens_list.append(tokens)
                 self.sizes.append(len(tokens))
         self.sizes = np.array(self.sizes)
+
+    def check_index(self, i):
+        if i < 0 or i >= self.size:
+            raise IndexError("index out of range")
+
+    @lru_cache(maxsize=8)
+    def __getitem__(self, i):
+        self.check_index(i)
+        return self.tokens_list[i]
+
+    def get_original_text(self, i):
+        self.check_index(i)
+        return self.lines[i]
+
+    def __del__(self):
+        pass
+
+    def __len__(self):
+        return self.size
+
+    def num_tokens(self, index):
+        return self.sizes[index]
+
+    def size(self, index):
+        return self.sizes[index]
+
+    @staticmethod
+    def exists(path):
+        if not path.startswith("hdfs://"):
+            return os.path.exists(path)
+        else:
+            command = "hadoop fs -test -e {};echo $?".format(path)
+            command_output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE).communicate()
+            if '1' not in str(command_output[0]):
+                return True
+            else:
+                return False
+
+
+class BufferedIndexedRawTextDataset(FairseqDataset):
+    """
+    Takes a text file as input and binarizes it in memory at instantiation.
+    Original lines are also kept in memory"""
+
+    def __init__(self, path, epoch, buffer_size, append_eos=True, reverse_order=False):
+        self.tokens_list = []
+        self.lines = []
+        self.sizes = []
+        self.append_eos = append_eos
+        self.reverse_order = reverse_order
+        self.read_data_from_bin_data(path, epoch, buffer_size)
+        self.size = len(self.tokens_list)
+
+    def read_data_from_bin_data(self, path, epoch, buffer_size):
+        with tf.io.gfile.GFile(path, 'rb') as reader:
+            data = torch.load(io.BytesIO(reader.read()))
+
+        sentences = data["sentences"]
+        length = len(sentences)
+        split = int(length / buffer_size) + 1
+
+        if split <= 1:
+            this_sent = sentences
+        else:
+            this_index = epoch % split
+            if this_index < (split - 1):
+                this_sent = sentences[this_index * buffer_size: (this_index + 1) * buffer_size]
+            else:
+                this_sent = sentences[this_index * buffer_size:]
+                remain = buffer_size - len(this_sent)
+                this_sent.extend(sentences[: remain])
+
+        for sentence in this_sent:
+            tokens = torch.IntTensor(sentence).long()
+            self.tokens_list.append(tokens)
+            self.sizes.append(len(tokens))
+
+        self.sizes = np.array(self.sizes)
+        del data
+        del sentences
 
     def check_index(self, i):
         if i < 0 or i >= self.size:

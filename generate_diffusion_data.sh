@@ -16,7 +16,7 @@ export CUDA_VISIBLE_DEVICES=$rank
 
 mkdir -p generation
 
-data_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/total_data/wmt_en_de_fr_ro_ru_zh/at_data/$rank
+data_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/total_data/wmt_en_de_fr_ro_ru_zh/at_data/rank$rank
 
 model_path=./output
 mkdir -p $model_path
@@ -26,10 +26,10 @@ hadoop fs -get $remote_model_path $model_path
 
 for rate in 0.2 0.3 0.4 0.5; do
 
-remote_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/total_data/wmt_en_de_fr_ro_ru_zh/new_better_diffusion_data/rate${rate}/$rank
+remote_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/total_data/wmt_en_de_fr_ro_ru_zh/new_better_diffusion_data/rate${rate}/rank$rank
 hadoop fs -mkdir -p ${remote_path}
 
-local_save_path=./generation/rate${rate}/${rank}
+local_save_path=./generation/rate${rate}/rank${rank}
 mkdir -p ${local_save_path}
 
 python3 fairseq_cli/generate_diffusion_data.py ${data_path} \
@@ -49,7 +49,7 @@ python3 fairseq_cli/generate_diffusion_data.py ${data_path} \
 --diffusion-num 300000 \
 --diffusion-steps ${src}-${tgt}-${diffusion_lang} \
 --diffusion-percentage ${rate} \
---diffusion-max-sentences 1 \
+--diffusion-max-sentence 1 \
 --output-translation-path ${local_save_path} \
 --hdfs-save-path ${remote_path}
 
