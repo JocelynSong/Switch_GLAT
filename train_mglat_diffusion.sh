@@ -43,7 +43,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --master_addr=$ARNOLD_WORKER_0_HOST --master_port=$ARNOLD_WORKER_0_PORT fairseq_cli/train_mglat_diffusion.py ${local_dataset_path} \
 --save-dir ${local_checkpoint_path} \
 --remote-save-dir ${remote_checkpoint_path} \
---restore-file ${model_name} \
+--restore-file ${local_checkpoint_path}/${model_name} \
 --task multilingual_glat_translation \
 --lgs "de-en-fr-ro-ru-zh" \
 --mt-steps "de-en,en-de,en-fr,fr-en,en-ro,ro-en,en-ru,ru-en,en-zh,zh-en" \
@@ -95,7 +95,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --diffusion-num 300000 \
 --diffusion-steps "de-en-zh,en-de-fr,en-fr-ro,en-ro-ru,en-ru-zh,en-zh-de,fr-en-de,ro-en-fr,ru-en-ro,zh-en-ru" \
 --diffusion-percentage 0.4 \
---diffusion-max-sentences 8 \
+--diffusion-max-sentence 8 \
 --diffusion-length-beam 1 \
 --enable-back-translation \
 --back-translation-steps "de-en,en-de,en-fr,fr-en,en-ro,ro-en,en-ru,ru-en,en-zh,zh-en" \

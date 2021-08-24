@@ -58,14 +58,14 @@ def get_ratio_list(starting_ratio_list, T):
     return new_list
 
 
-def get_diffused_epoch_iter(cfg, diffusion_step, epoch):
-    return cfg.task.get_batch_iterator(
-            dataset=cfg.task.get_diffusion_dataset(diffusion_step),
+def get_diffused_epoch_iter(cfg, task, model, diffusion_step, epoch):
+    return task.get_batch_iterator(
+            dataset=task.get_diffusion_dataset(diffusion_step),
             max_tokens=cfg.dataset.max_tokens,
             max_sentences=cfg.dataset.batch_size,
             max_positions=utils.resolve_max_positions(
-                cfg.task.max_positions(),
-                cfg.model.max_positions(),
+                task.max_positions(),
+                model.max_positions(),
                 cfg.dataset.max_tokens,
             ),
             ignore_invalid_inputs=True,
@@ -79,14 +79,14 @@ def get_diffused_epoch_iter(cfg, diffusion_step, epoch):
             disable_iterator_cache=False)
 
 
-def get_back_trans_epoch_iter(cfg, back_pair, epoch):
-    return cfg.task.get_batch_iterator(
-        dataset=cfg.task.get_back_trans_dataset(back_pair),
+def get_back_trans_epoch_iter(cfg, task, model, back_pair, epoch):
+    return task.get_batch_iterator(
+        dataset=task.get_back_trans_dataset(back_pair),
         max_tokens=cfg.dataset.max_tokens,
         max_sentences=cfg.dataset.batch_size,
         max_positions=utils.resolve_max_positions(
-            cfg.task.max_positions(),
-            cfg.model.max_positions(),
+            task.max_positions(),
+            model.max_positions(),
             cfg.dataset.max_tokens,
         ),
         ignore_invalid_inputs=True,
@@ -101,7 +101,7 @@ def get_back_trans_epoch_iter(cfg, back_pair, epoch):
     )
 
 
-def get_diffused_iter_dict(cfg, epoch, update_freq, diffusion_path):
+def get_diffused_iter_dict(cfg, task, model, epoch, update_freq, diffusion_path):
     diffused_epoch_itr, diffused_iter_dict = {}, {}
     diffusion_cand = {}
     for diffusion_step in cfg.task.diffusion_steps.strip().split(","):
@@ -110,8 +110,8 @@ def get_diffused_iter_dict(cfg, epoch, update_freq, diffusion_path):
         diffusion_cand["-".join([src_lang, tgt_lang])] = diffusion_step
 
         # load diffusion data
-        cfg.task.load_diffusion_dataset(diffusion_path, diffusion_step)
-        diffused_epoch_itr[("mt", src_lang, tgt_lang, diffusion_lang)] = get_diffused_epoch_iter(cfg, diffusion_step,
+        task.load_diffusion_dataset(diffusion_path, diffusion_step)
+        diffused_epoch_itr[("mt", src_lang, tgt_lang, diffusion_lang)] = get_diffused_epoch_iter(cfg, task, model, diffusion_step,
                                                                                                  epoch)
 
         diffused_iter_dict[("mt", src_lang, tgt_lang, diffusion_lang)] = \
@@ -122,7 +122,7 @@ def get_diffused_iter_dict(cfg, epoch, update_freq, diffusion_path):
         diffused_iter_dict[("mt", src_lang, tgt_lang, diffusion_lang)] = iterators.GroupedIterator(
             diffused_iter_dict[("mt", src_lang, tgt_lang, diffusion_lang)],
             update_freq)
-    cfg.task.diffusion_cand = diffusion_cand
+    task.diffusion_cand = diffusion_cand
     return diffused_epoch_itr, diffused_iter_dict
 
 
@@ -281,7 +281,7 @@ def main(cfg: FairseqConfig) -> None:
             # load back-translation data
             back_translation_path = os.path.join(cfg.task.back_translation_path, "rank{}".format(local_rank))
             task.load_back_translation_dataset(back_translation_path, back_pair)
-            back_epoch_itr[("mt", back_src, back_tgt)] = get_back_trans_epoch_iter(cfg, back_pair,
+            back_epoch_itr[("mt", back_src, back_tgt)] = get_back_trans_epoch_iter(cfg, task, model, back_pair,
                                                                                    epoch=epoch_itr["epoch"])
 
             back_iter_dict[("mt", back_src, back_tgt)] = back_epoch_itr[("mt", back_src, back_tgt)].next_epoch_itr(
@@ -356,7 +356,7 @@ def main(cfg: FairseqConfig) -> None:
                     back_translation_path = os.path.join(cfg.task.back_translation_path, "rank{}".format(local_rank))
                     task.load_back_translation_dataset(back_translation_path, back_pair, lazy_load_epoch,
                                                        cfg.task.buffer_size, cfg.task.enable_lazy_loader)
-                    back_epoch_itr[("mt", back_src, back_tgt)] = get_back_trans_epoch_iter(cfg, back_pair,
+                    back_epoch_itr[("mt", back_src, back_tgt)] = get_back_trans_epoch_iter(cfg, task, model, back_pair,
                                                                                            epoch=epoch_itr["epoch"])
 
                     back_iter_dict[("mt", back_src, back_tgt)] = \
@@ -373,11 +373,11 @@ def main(cfg: FairseqConfig) -> None:
                 lazy_load_epoch += 1
 
         # load diffusion data
-        if schedule_epoch % cfg.task.diffusion_generation_interval:
+        if schedule_epoch % cfg.task.diffusion_generation_interval == 0:
             index = int(schedule_epoch / cfg.task.diffusion_generation_interval) % 4
             diffusion_path = os.path.join(cfg.task.diffusion_data_path, diffusion_rate[index],
                                           "rank{}".format(local_rank))
-            diffused_epoch_itr, diffused_iter_dict = get_diffused_iter_dict(cfg, epoch_itr["epoch"], update_freq,
+            diffused_epoch_itr, diffused_iter_dict = get_diffused_iter_dict(cfg, task, model, epoch_itr["epoch"], update_freq,
                                                                             diffusion_path)
 
         # set sampling ratio
@@ -488,7 +488,7 @@ def train(
                 del diffused_iter_dict[("mt", src_lang, tgt_lang, diffusion_lang)]
 
                 diffused_epoch_itr[("mt", src_lang, tgt_lang, diffusion_lang)] = get_diffused_epoch_iter(
-                    cfg, pair, new_diffusion_iter_epoch)
+                    cfg, task, trainer.get_model(), pair, new_diffusion_iter_epoch)
                 diffused_iter_dict[("mt", src_lang, tgt_lang, diffusion_lang)] = \
                     diffused_epoch_itr[("mt", src_lang, tgt_lang, diffusion_lang)].next_epoch_itr(
                     fix_batches_to_gpus=cfg.distributed_training.fix_batches_to_gpus,
@@ -507,7 +507,7 @@ def train(
                 del back_epoch_itr[("mt", src_lang, tgt_lang)]
                 del back_iter_dict[("mt", src_lang, tgt_lang)]
 
-                back_epoch_itr[("mt", src_lang, tgt_lang)] = get_back_trans_epoch_iter(cfg, pair, new_data_iter_epoch)
+                back_epoch_itr[("mt", src_lang, tgt_lang)] = get_back_trans_epoch_iter(cfg, task, trainer.get_model(), pair, new_data_iter_epoch)
                 back_iter_dict[("mt", src_lang, tgt_lang)] = back_epoch_itr[("mt", src_lang, tgt_lang)].next_epoch_itr(
                     fix_batches_to_gpus=cfg.distributed_training.fix_batches_to_gpus, shuffle=True)
                 back_iter_dict[("mt", src_lang, tgt_lang)] = \

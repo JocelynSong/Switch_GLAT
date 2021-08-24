@@ -2,9 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/fairseq_cli/process_raw_data_to_path.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/generate_diffusion_data_en_de_fr.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/generate_diffusion_data_en_fr_zh.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/process_bin.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq/tasks/multilingual_glat_translation.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/tasks/multilingual_glat_translation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/data/dictionary.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/data/dictionary.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq_cli/train_mglat_diffusion.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/train_mglat_diffusion.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_mglat_diffusion.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_mglat_diffusion.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -147,7 +152,8 @@
       <workItem from="1628241504413" duration="1859000" />
       <workItem from="1628496409648" duration="501000" />
       <workItem from="1628577928663" duration="40000" />
-      <workItem from="1628836361152" duration="40552000" />
+      <workItem from="1628836361152" duration="42816000" />
+      <workItem from="1629771458433" duration="5392000" />
     </task>
     <servers />
   </component>

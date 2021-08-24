@@ -366,6 +366,25 @@ class Dictionary:
             ids[nwords] = self.eos_index
         return ids
 
+    def encode_line_not_to_tensor(self, line, line_tokenizer=tokenize_line, add_if_not_exist=True,
+                                  consumer=None, append_eos=True, reverse_order=False):
+        words = line_tokenizer(line)
+        if reverse_order:
+            words = list(reversed(words))
+        ids = []
+
+        for i, word in enumerate(words):
+            if add_if_not_exist:
+                idx = self.add_symbol(word)
+            else:
+                idx = self.index(word)
+            if consumer is not None:
+                consumer(word, idx)
+            ids.append(idx)
+        if append_eos:
+            ids.append(self.eos_index)
+        return ids
+
     @staticmethod
     def _add_file_to_dictionary_single_worker(
         filename, tokenize, eos_word, worker_id=0, num_workers=1
