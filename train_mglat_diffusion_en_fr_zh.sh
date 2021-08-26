@@ -8,11 +8,11 @@ pip install .
 pip install sacremoses
 
 # AT Data Pth
-data_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/total_data/wmt_en_de_fr_ro_ru_zh
-local_dataset_path=${data_path}/at_data
+data_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/total_data/wmt_en_fr_zh
+local_dataset_path=${data_path}/KD
 
 # Diffusion data path
-diffusion_data_path=${data_path}/new_better_diffusion_data
+diffusion_data_path=${data_path}/better_diffusion_data
 
 # back translation data path
 back_trans_data_path=${data_path}/back_trans
@@ -24,15 +24,15 @@ mkdir -p ${output_path}
 local_checkpoint_path=${output_path}/save_model
 
 # remote model saving path
-hdfs_checkpoint_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_ten
-remote_checkpoint_path=${hdfs_checkpoint_path}/good_diffusion_ten_model
+hdfs_checkpoint_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_en_fr_zh
+remote_checkpoint_path=${hdfs_checkpoint_path}/good_diffusion_model
 mkdir -p ${local_checkpoint_path}
 hadoop fs -mkdir -p ${hdfs_checkpoint_path}
 hadoop fs -mkdir -p ${remote_checkpoint_path}
 
 # initialize model path
-initialized_model_path=${hdfs_checkpoint_path}/lang_embed_first_last_layer
-model_name=checkpoint_zh-en_best.pt
+initialized_model_path=${hdfs_checkpoint_path}/mglat_en_fr_zh_better_new
+model_name=checkpoint_en-fr_best.pt
 hadoop fs -get ${initialized_model_path}/${model_name} ${local_checkpoint_path}
 
 export NCCL_IB_DISABLE=0
@@ -45,9 +45,9 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --remote-save-dir ${remote_checkpoint_path} \
 --restore-file ${local_checkpoint_path}/${model_name} \
 --task multilingual_glat_translation \
---lgs "de-en-fr-ro-ru-zh" \
---mt-steps "de-en,en-de,en-fr,fr-en,en-ro,ro-en,en-ru,ru-en,en-zh,zh-en" \
---metric-pair "de-en" \
+--lgs "en-fr-zh" \
+--mt-steps "en-fr,fr-en,en-zh,zh-en" \
+--metric-pair "fr-en" \
 --total-sample-updates 600000 \
 --minus-p 0.3 \
 --dataset-impl "raw" \
@@ -88,19 +88,19 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --maximize-best-checkpoint-metric \
 --activation-fn gelu \
 --share-all-embeddings \
---vanilla-model-bleu '{"de-en": 28.63, "en-de": 22.1, "ro-en": 34.78, "en-ro": 30.25, "ru-en": 28.38, "en-ru": 22.86, "en-zh": 12.58, "zh-en": 16.16, "en-fr": 30.82, "fr-en": 32.11}' \
+--vanilla-model-bleu '{"en-zh": 16.69, "zh-en": 17.84, "en-fr": 32.36, "fr-en": 32.27}' \
 --diffusion-data-path ${diffusion_data_path} \
 --diffusion-generation-interval 10 \
 --diffusion-interval 5 \
 --diffusion-num 300000 \
---diffusion-steps "de-en-zh,en-de-fr,en-fr-ro,en-ro-ru,en-ru-zh,en-zh-de,fr-en-de,ro-en-fr,ru-en-ro,zh-en-ru" \
+--diffusion-steps "en-fr-zh,en-zh-fr,fr-en-zh,zh-en-fr" \
 --diffusion-percentage 0.4 \
 --diffusion-max-sentence 8 \
 --diffusion-length-beam 1 \
 --enable-back-translation \
---back-translation-steps "de-en,en-de,en-fr,fr-en,en-ro,ro-en,en-ru,ru-en,en-zh,zh-en" \
+--back-translation-steps "en-fr,fr-en,en-zh,zh-en" \
 --back-translation-path ${back_trans_data_path} \
 --back-translation-interval 4 \
 --enable-lazy-loader \
---buffer-size 500000 \
+--buffer-size 1000000 \
 --lazy-load-interval 30
