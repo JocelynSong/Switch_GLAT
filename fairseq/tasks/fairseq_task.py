@@ -259,12 +259,12 @@ class FairseqTask(object):
             ~fairseq.iterators.EpochBatchIterator: a batched iterator over the
                 given dataset split
         """
-        can_reuse_epoch_itr = not disable_iterator_cache and self.can_reuse_epoch_itr(
-            dataset
-        )
-        if can_reuse_epoch_itr and dataset in self.dataset_to_epoch_iter:
-            logger.debug("reusing EpochBatchIterator for epoch {}".format(epoch))
-            return self.dataset_to_epoch_iter[dataset]
+        # can_reuse_epoch_itr = not disable_iterator_cache and self.can_reuse_epoch_itr(
+        #     dataset
+        # )
+        # if can_reuse_epoch_itr and dataset in self.dataset_to_epoch_iter:
+        #     logger.debug("reusing EpochBatchIterator for epoch {}".format(epoch))
+        #     return self.dataset_to_epoch_iter[dataset]
 
         assert isinstance(dataset, FairseqDataset)
 
@@ -299,11 +299,10 @@ class FairseqTask(object):
             shard_id=shard_id,
             num_workers=num_workers,
             epoch=epoch,
-            buffer_size=data_buffer_size,
         )
 
-        if can_reuse_epoch_itr:
-            self.dataset_to_epoch_iter[dataset] = epoch_iter
+        # if can_reuse_epoch_itr:
+        #     self.dataset_to_epoch_iter[dataset] = epoch_iter
 
         return epoch_iter
 

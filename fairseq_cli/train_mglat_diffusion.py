@@ -326,7 +326,7 @@ def main(cfg: FairseqConfig) -> None:
 
         # update training data piece for lazy loader
         if cfg.task.enable_lazy_loader:
-            if (schedule_epoch != 0) and (epoch_itr["epoch"] % cfg.task.lazy_load_interval == 0):
+            if (schedule_epoch != 0) and (schedule_epoch % cfg.task.lazy_load_interval == 0):
                 for pair in pair_list:
                     logger.info("Loading new piece of data for pair %s" % pair)
                     task.load_para_dataset(cfg.dataset.train_subset, pair, epoch=lazy_load_epoch,
@@ -347,7 +347,7 @@ def main(cfg: FairseqConfig) -> None:
                         iter_dict[("mt", src_lang, tgt_lang)] = utils.tpu_data_loader(
                             iter_dict[("mt", src_lang, tgt_lang)])
 
-            if (schedule_epoch == 0) or (epoch_itr["epoch"] % cfg.task.lazy_load_interval == 0):
+            if (schedule_epoch == 0) or (schedule_epoch % cfg.task.lazy_load_interval == 0):
                 for back_pair in cfg.task.back_translation_steps.split(","):
                     back_langs = back_pair.split("-")
                     back_src, back_tgt = back_langs[0].strip(), back_langs[1].strip()
@@ -705,7 +705,7 @@ def validate(
 
         # Initialize data iterator
         itr = trainer.get_valid_iterator(subset, pair).next_epoch_itr(
-            shuffle=False, set_dataset_epoch=False  # use a fixed valid set
+            shuffle=False  # use a fixed valid set
         )
         if cfg.common.tpu:
             itr = utils.tpu_data_loader(itr)

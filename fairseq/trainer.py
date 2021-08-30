@@ -591,7 +591,7 @@ class Trainer(object):
             data_buffer_size=self.cfg.dataset.data_buffer_size,
             disable_iterator_cache=disable_iterator_cache,
         )
-        self.reset_dummy_batch(lang_batch_iterator[list(lang_batch_iterator.keys())[0]].first_batch)
+        # self.reset_dummy_batch(lang_batch_iterator[list(lang_batch_iterator.keys())[0]].first_batch)
         return lang_batch_iterator
 
     def get_single_pair_train_iterator(
@@ -651,7 +651,7 @@ class Trainer(object):
             data_buffer_size=self.cfg.dataset.data_buffer_size,
             disable_iterator_cache=disable_iterator_cache,
         )
-        self.reset_dummy_batch(batch_iterator.first_batch)
+        # self.reset_dummy_batch(batch_iterator.first_batch)
         return batch_iterator
 
     def get_single_train_iterator(
@@ -692,7 +692,7 @@ class Trainer(object):
             data_buffer_size=self.cfg.dataset.data_buffer_size,
             disable_iterator_cache=disable_iterator_cache,
         )
-        self.reset_dummy_batch(batch_iterator.first_batch)
+        # self.reset_dummy_batch(batch_iterator.first_batch)
         return batch_iterator
 
     def get_single_valid_iterator(
@@ -721,7 +721,7 @@ class Trainer(object):
             data_buffer_size=self.cfg.dataset.data_buffer_size,
             disable_iterator_cache=disable_iterator_cache,
         )
-        self.reset_dummy_batch(batch_iterator.first_batch)
+        # self.reset_dummy_batch(batch_iterator.first_batch)
         return batch_iterator
 
     def begin_epoch(self, epoch):
