@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/train_mglat_diffusion_nat.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/train_mglat_diffusion_nat_en_de_fr.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/train_mglat_diffusion_nat_en_fr_zh.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/tasks/multilingual_nat_translation.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/tasks/multilingual_nat_translation.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -148,7 +150,7 @@
       <workItem from="1628577928663" duration="40000" />
       <workItem from="1628836361152" duration="42816000" />
       <workItem from="1629771458433" duration="9882000" />
-      <workItem from="1630072554935" duration="24492000" />
+      <workItem from="1630072554935" duration="27013000" />
     </task>
     <servers />
   </component>
