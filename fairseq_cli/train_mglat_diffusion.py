@@ -347,7 +347,7 @@ def main(cfg: FairseqConfig) -> None:
                         iter_dict[("mt", src_lang, tgt_lang)] = utils.tpu_data_loader(
                             iter_dict[("mt", src_lang, tgt_lang)])
 
-            if (schedule_epoch == 0) or (schedule_epoch % cfg.task.lazy_load_interval == 0):
+            if cfg.task.enable_back_translation and ((schedule_epoch == 0) or (schedule_epoch % cfg.task.lazy_load_interval == 0)):
                 for back_pair in cfg.task.back_translation_steps.split(","):
                     back_langs = back_pair.split("-")
                     back_src, back_tgt = back_langs[0].strip(), back_langs[1].strip()
@@ -496,6 +496,9 @@ def train(
                 diffused_iter_dict[("mt", src_lang, tgt_lang, diffusion_lang)] = \
                     iterators.GroupedIterator(diffused_iter_dict[("mt", src_lang, tgt_lang, diffusion_lang)], update_freq)
                 samples = next(diffused_iter_dict[("mt", src_lang, tgt_lang, diffusion_lang)])
+            diffusion_src, diffusion_tgt = tgt_lang, src_lang
+            src_lang = diffusion_src
+            tgt_lang = diffusion_tgt
         elif cfg.task.enable_back_translation and trainer.step_size % cfg.task.back_translation_interval == 0:
             pair = random.choice(back_translation_steps)
             langs = pair.split("-")
