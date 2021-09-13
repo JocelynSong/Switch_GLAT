@@ -22,13 +22,13 @@ local_checkpoint_path=${output_path}/save_model
 
 # remote model saving path
 hdfs_checkpoint_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/multilingual_nat
-remote_checkpoint_path=${hdfs_checkpoint_path}/dict_diffusion_en_de_fr
+remote_checkpoint_path=${hdfs_checkpoint_path}/dict_diffusion_en_de_fr_v2
 mkdir -p ${local_checkpoint_path}
 hadoop fs -mkdir -p ${hdfs_checkpoint_path}
 hadoop fs -mkdir -p ${remote_checkpoint_path}
 
 # initialize model path
-initialized_model_path=${hdfs_checkpoint_path}/vanilla_MNAT_en_de_fr
+initialized_model_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_en_de_fr/mglat_en_de_fr_better_new
 model_name=checkpoint_fr-en_best.pt
 hadoop fs -get ${initialized_model_path}/${model_name} ${local_checkpoint_path}
 
@@ -42,7 +42,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --remote-save-dir ${remote_checkpoint_path} \
 --restore-file ${local_checkpoint_path}/${model_name} \
 --task multilingual_nat_translation \
---lgs "de-en-fr" \
+--lgs "en-en-fr" \
 --mt-steps "de-en,en-de,en-fr,fr-en" \
 --metric-pair "de-en" \
 --total-sample-updates 600000 \
@@ -85,7 +85,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --maximize-best-checkpoint-metric \
 --activation-fn gelu \
 --share-all-embeddings \
---vanilla-model-bleu '{"de-en": 26.68, "en-de": 20.57, "en-fr": 25.81, "fr-en": 27.59}' \
+--vanilla-model-bleu '{"de-en": 29.4, "en-de": 24.01, "en-fr": 31.78, "fr-en": 32.03}' \
 --diffusion-data-path ${diffusion_data_path} \
 --diffusion-generation-interval 10 \
 --diffusion-interval 5 \

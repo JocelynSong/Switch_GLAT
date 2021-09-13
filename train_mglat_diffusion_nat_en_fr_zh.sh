@@ -42,7 +42,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --remote-save-dir ${remote_checkpoint_path} \
 --restore-file ${local_checkpoint_path}/${model_name} \
 --task multilingual_nat_translation \
---lgs "de-fr-zh" \
+--lgs "en-fr-zh" \
 --mt-steps "en-fr,fr-en,en-zh,zh-en" \
 --metric-pair "fr-en" \
 --total-sample-updates 600000 \

@@ -22,13 +22,13 @@ local_checkpoint_path=${output_path}/save_model
 
 # remote model saving path
 hdfs_checkpoint_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/multilingual_nat
-remote_checkpoint_path=${hdfs_checkpoint_path}/dict_diffusion_ten_lang
+remote_checkpoint_path=${hdfs_checkpoint_path}/dict_diffusion_ten_lang_v2
 mkdir -p ${local_checkpoint_path}
 hadoop fs -mkdir -p ${hdfs_checkpoint_path}
 hadoop fs -mkdir -p ${remote_checkpoint_path}
 
 # initialize model path
-initialized_model_path=${hdfs_checkpoint_path}/vanilla_MNAT
+initialized_model_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_ten/lang_embed_first_last_layer
 model_name=checkpoint_zh-en_best.pt
 hadoop fs -get ${initialized_model_path}/${model_name} ${local_checkpoint_path}
 
@@ -85,7 +85,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --maximize-best-checkpoint-metric \
 --activation-fn gelu \
 --share-all-embeddings \
---vanilla-model-bleu '{"de-en": 23.48, "en-de": 16.06, "ro-en": 31.95, "en-ro": 26.63, "ru-en": 24.37, "en-ru": 16.28, "en-zh": 7.49, "zh-en": 9.25, "en-fr": 24.03, "fr-en": 27.1}' \
+--vanilla-model-bleu '{"de-en": 28.63, "en-de": 22.1, "ro-en": 34.78, "en-ro": 30.25, "ru-en": 28.38, "en-ru": 22.86, "en-zh": 12.58, "zh-en": 16.16, "en-fr": 30.82, "fr-en": 32.11}' \
 --diffusion-data-path ${diffusion_data_path} \
 --diffusion-generation-interval 10 \
 --diffusion-interval 5 \
