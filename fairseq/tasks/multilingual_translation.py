@@ -145,7 +145,7 @@ class MultilingualTranslationTask(LegacyFairseqTask):
             paths = utils.split_paths(args.data)
             assert len(paths) > 0
             dicts[lang] = cls.load_dictionary(
-                os.path.join(paths[0], "dict.{}.txt".format(lang))
+                os.path.join(paths[0], "dict.txt")
             )
             if len(dicts) > 0:
                 assert dicts[lang].pad() == dicts[sorted_langs[0]].pad()

@@ -41,7 +41,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --save-dir ${local_checkpoint_path} \
 --remote-save-dir ${remote_checkpoint_path} \
 --restore-file ${local_checkpoint_path}/${model_name} \
---task multilingual_nat_translation \
+--task multilingual_glat_translation \
 --lgs "de-en-fr-ro-ru-zh" \
 --mt-steps "de-en,en-de,en-fr,fr-en,en-ro,ro-en,en-ru,ru-en,en-zh,zh-en" \
 --metric-pair "de-en" \

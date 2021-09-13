@@ -207,10 +207,18 @@ class MultilingualTransformerModel(FairseqMultiModel):
 @register_model_architecture("multilingual_transformer", "multilingual_transformer")
 def base_multilingual_architecture(args):
     base_architecture(args)
-    args.share_encoder_embeddings = getattr(args, "share_encoder_embeddings", False)
-    args.share_decoder_embeddings = getattr(args, "share_decoder_embeddings", False)
-    args.share_encoders = getattr(args, "share_encoders", False)
-    args.share_decoders = getattr(args, "share_decoders", False)
+    args.share_encoder_embeddings = getattr(args, "share_encoder_embeddings", True)
+    args.share_decoder_embeddings = getattr(args, "share_decoder_embeddings", True)
+    args.share_encoders = getattr(args, "share_encoders", True)
+    args.share_decoders = getattr(args, "share_decoders", True)
+    args.encoder_embed_dim = getattr(args, "encoder_embed_dim", 512)
+    args.encoder_ffn_embed_dim = getattr(args, "encoder_ffn_embed_dim", 2048)
+    args.encoder_attention_heads = getattr(args, "encoder_attention_heads", 8)
+    args.encoder_layers = getattr(args, "encoder_layers", 6)
+    args.decoder_embed_dim = getattr(args, "decoder_embed_dim", 512)
+    args.decoder_ffn_embed_dim = getattr(args, "decoder_ffn_embed_dim", 2048)
+    args.decoder_attention_heads = getattr(args, "decoder_attention_heads", 8)
+    args.decoder_layers = getattr(args, "decoder_layers", 6)
 
 
 @register_model_architecture(

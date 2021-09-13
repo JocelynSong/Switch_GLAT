@@ -169,7 +169,8 @@ def main(cfg: FairseqConfig) -> None:
 
     train_meter = meters.StopwatchMeter()
     train_meter.start()
-    while epoch_itr.next_epoch_idx <= max_epoch:
+    train_epoch = 1
+    while train_epoch <= max_epoch:
         if lr <= cfg.optimization.stop_min_lr:
             logger.info(
                 f"stopping training because current learning rate ({lr}) is smaller "
@@ -179,7 +180,7 @@ def main(cfg: FairseqConfig) -> None:
             break
 
         # train for one epoch
-        valid_losses, should_stop = train(cfg, trainer, task, epoch_itr)
+        valid_losses, should_stop = train(cfg, trainer, task, epoch_itr, train_epoch)
         if should_stop:
             break
 
@@ -187,12 +188,13 @@ def main(cfg: FairseqConfig) -> None:
         lr = trainer.lr_step(epoch_itr.epoch, valid_losses[0])
 
         epoch_itr = trainer.get_single_train_iterator(
-            epoch_itr.next_epoch_idx,
+            train_epoch,
             # sharded data: get train iterator for next epoch
             load_dataset=task.has_sharded_data("train"),
             # don't cache epoch iterators for sharded datasets
             disable_iterator_cache=task.has_sharded_data("train"),
         )
+        train_epoch += 1
     train_meter.stop()
     logger.info("done training in {:.1f} seconds".format(train_meter.sum))
 
@@ -236,13 +238,13 @@ def should_stop_early(cfg: DictConfig, valid_loss: float) -> bool:
 
 @metrics.aggregate("train")
 def train(
-    cfg: DictConfig, trainer: Trainer, task: tasks.FairseqTask, epoch_itr
+    cfg: DictConfig, trainer: Trainer, task: tasks.FairseqTask, epoch_itr, train_epoch
 ) -> Tuple[List[Optional[float]], bool]:
     """Train the model for one epoch and return validation losses."""
     # Initialize data iterator
     itr = epoch_itr.next_epoch_itr(
         fix_batches_to_gpus=cfg.distributed_training.fix_batches_to_gpus,
-        shuffle=(epoch_itr.next_epoch_idx > cfg.dataset.curriculum),
+        shuffle=(train_epoch > cfg.dataset.curriculum),
     )
     update_freq = (
         cfg.optimization.update_freq[epoch_itr.epoch - 1]
@@ -303,10 +305,6 @@ def train(
                 # the end-of-epoch stats will still be preserved
                 metrics.reset_meters("train_inner")
 
-        end_of_epoch = not itr.has_next()
-        valid_losses, should_stop = validate_and_save(
-            cfg, trainer, task, epoch_itr, valid_subsets, end_of_epoch
-        )
 
         if should_stop:
             break
@@ -318,6 +316,9 @@ def train(
 
     # reset epoch-level meters
     metrics.reset_meters("train")
+    valid_losses, should_stop = validate_and_save(
+        cfg, trainer, task, epoch_itr, valid_subsets
+    )
     return valid_losses, should_stop
 
 
@@ -340,7 +341,6 @@ def validate_and_save(
     task: tasks.FairseqTask,
     epoch_itr,
     valid_subsets: List[str],
-    end_of_epoch: bool,
 ) -> Tuple[List[Optional[float]], bool]:
     num_updates = trainer.get_num_updates()
     max_update = cfg.optimization.max_update or math.inf
@@ -367,26 +367,8 @@ def validate_and_save(
             f"stop_time_hours: {cfg.optimization.stop_time_hours} hour(s)"
         )
 
-    do_save = (
-        (end_of_epoch and epoch_itr.epoch % cfg.checkpoint.save_interval == 0)
-        or should_stop
-        or (
-            cfg.checkpoint.save_interval_updates > 0
-            and num_updates > 0
-            and num_updates % cfg.checkpoint.save_interval_updates == 0
-            and num_updates >= cfg.dataset.validate_after_updates
-        )
-    )
-    do_validate = (
-        (not end_of_epoch and do_save)  # validate during mid-epoch saves
-        or (end_of_epoch and epoch_itr.epoch % cfg.dataset.validate_interval == 0)
-        or should_stop
-        or (
-            cfg.dataset.validate_interval_updates > 0
-            and num_updates > 0
-            and num_updates % cfg.dataset.validate_interval_updates == 0
-        )
-    ) and not cfg.dataset.disable_validation and num_updates >= cfg.dataset.validate_after_updates
+    do_save = True
+    do_validate = True
 
     # Validate
     valid_losses = [None]
@@ -429,7 +411,7 @@ def validate(
 
         # Initialize data iterator
         itr = trainer.get_single_valid_iterator(subset).next_epoch_itr(
-            shuffle=False, set_dataset_epoch=False  # use a fixed valid set
+            shuffle=False  # use a fixed valid set
         )
         if cfg.common.tpu:
             itr = utils.tpu_data_loader(itr)

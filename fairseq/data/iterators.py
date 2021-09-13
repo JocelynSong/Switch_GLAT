@@ -196,6 +196,21 @@ class EpochBatchIterator(EpochBatchIterating):
             return self._next_epoch_itr.count
         return 0
 
+    @property
+    def first_batch(self):
+        if len(self.frozen_batches) == 0:
+            raise Exception(
+                "The dataset is empty. This could indicate "
+                "that all elements in the dataset have been skipped. "
+                "Try increasing the max number of allowed tokens or using "
+                "a larger dataset."
+            )
+
+        if getattr(self.dataset, "supports_fetch_outside_dataloader", True):
+            return self.collate_fn([self.dataset[i] for i in self.frozen_batches[0]])
+        else:
+            return "DUMMY"
+
     def state_dict(self):
         """Returns a dictionary containing a whole state of the iterator."""
         return {
