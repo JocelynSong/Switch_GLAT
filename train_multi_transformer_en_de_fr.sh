@@ -26,7 +26,7 @@ export NCCL_IB_HCA=$ARNOLD_RDMA_DEVICE:1
 export NCCL_IB_GID_INDEX=3
 export NCCL_SOCKET_IFNAME=eth0
 python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes=$ARNOLD_NUM  --node_rank=$ARNOLD_ID \
---master_addr=$ARNOLD_WORKER_0_HOST --master_port=$ARNOLD_WORKER_0_PORT fairseq_cli/train_mglat.py ${local_dataset_path} \
+--master_addr=$ARNOLD_WORKER_0_HOST --master_port=$ARNOLD_WORKER_0_PORT fairseq_cli/train_multi_trans.py ${local_dataset_path} \
 --save-dir ${local_checkpoint_path} \
 --remote-save-dir ${remote_checkpoint_path} \
 --task multilingual_translation_song \
@@ -45,7 +45,6 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --warmup-updates 4000 \
 --warmup-init-lr 1e-7 \
 --dropout 0.1 \
---annealing-total-num 1200000 \
 --weight-decay 0.01 \
 --max-tokens 8192 \
 --update-freq 1 \

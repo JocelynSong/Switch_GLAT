@@ -314,11 +314,6 @@ def train(
 
     trainer.step_size = 0
     while trainer.step_size < cfg.dataset.validate_after_updates:
-        start_num_updates = trainer.get_num_updates()
-        annealed_dropout = (max(0., 1. - float(start_num_updates) / cfg.task.annealing_total_num)) * cfg.model.dropout
-        trainer.get_model().encoder.update_dropout_rate(annealed_dropout)
-        trainer.get_model().decoder.update_dropout_rate(annealed_dropout)
-
         if ratio_list is not None:
             pair = np.random.choice(pair_list, 1, p=ratio_list)[0]
         else:
@@ -355,8 +350,8 @@ def train(
             num_updates = trainer.get_num_updates()
             if num_updates % cfg.common.log_interval == 0:
                 stats = get_training_stats(metrics.get_smoothed_values("train_inner"))
-                info = "Epoch=%d, Step=%d, Updates=%d, KD data steps: %s" % (epoch_itr["epoch"], trainer.step_size + 1,
-                                                                              trainer.get_num_updates(), pair)
+                info = "Epoch=%d, Step=%d, Updates=%d, MT steps: %s" % (epoch_itr["epoch"], trainer.step_size + 1,
+                                                                        trainer.get_num_updates(), pair)
                 for key in stats.keys():
                     info = "{} |{}: {}".format(info, key, stats[key])
                 logger.info(info)

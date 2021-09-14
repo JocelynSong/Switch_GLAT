@@ -2,12 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/fairseq/criterions/multilingual_label_smoothed_cross_entropy.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fairseq/models/mutllingual_transformer_new.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fairseq/tasks/multilingual_translation_new.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fairseq_cli/train_multi_trans.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq/sequence_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/sequence_generator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/trainer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/models/mutllingual_transformer_new.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/models/mutllingual_transformer_new.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/tasks/multilingual_translation_new.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/tasks/multilingual_translation_new.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_multi_transformer.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_multi_transformer.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_multi_transformer_en_de_fr.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_multi_transformer_en_de_fr.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_multi_transformer_en_fr_zh.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_multi_transformer_en_fr_zh.sh" afterDir="false" />
@@ -38,7 +37,7 @@
     <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/fairseq_cli" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -49,11 +48,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/fairseq_cli" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/fairseq/criterions" />
       <recent name="$PROJECT_DIR$/fairseq/tasks" />
       <recent name="$PROJECT_DIR$/fairseq/models" />
-      <recent name="$PROJECT_DIR$/fairseq_cli" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -158,7 +157,7 @@
       <workItem from="1629771458433" duration="9882000" />
       <workItem from="1630072554935" duration="33042000" />
       <workItem from="1631081730972" duration="598000" />
-      <workItem from="1631236833221" duration="23753000" />
+      <workItem from="1631236833221" duration="26360000" />
     </task>
     <servers />
   </component>

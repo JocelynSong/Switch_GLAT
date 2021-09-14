@@ -165,7 +165,7 @@ def load_langpair_dataset(
 
 
 @dataclass
-class MultilingualTranslationConfig(FairseqDataclass):
+class NewMultilingualTranslationConfig(FairseqDataclass):
     data: Optional[str] = field(
         default=None,
         metadata={
@@ -254,14 +254,10 @@ class MultilingualTranslationConfig(FairseqDataclass):
         default=False,
         metadata={"help": "whether use the lazy data loader"}
     )
-    annealing_total_num: int = field(
-        default=1200000,
-        metadata={"help": "Total number of dropout annealing"}
-    )
 
 
-@register_task("multilingual_translation_song", dataclass=MultilingualTranslationConfig)
-class MultilingualTranslationTask(FairseqTask):
+@register_task("multilingual_translation_song", dataclass=NewMultilingualTranslationConfig)
+class NewMultilingualTranslationTask(FairseqTask):
     """
     Translate from one (source) language to another (target) language.
 
@@ -275,9 +271,9 @@ class MultilingualTranslationTask(FairseqTask):
         :mod:`fairseq-generate` and :mod:`fairseq-interactive`.
     """
 
-    cfg: MultilingualTranslationConfig
+    cfg: NewMultilingualTranslationConfig
 
-    def __init__(self, cfg: MultilingualTranslationConfig, src_dict, tgt_dict):
+    def __init__(self, cfg: NewMultilingualTranslationConfig, src_dict, tgt_dict):
         super().__init__(cfg)
         self.src_dict = src_dict
         self.tgt_dict = tgt_dict
@@ -287,7 +283,7 @@ class MultilingualTranslationTask(FairseqTask):
         self.iterator = {}
 
     @classmethod
-    def setup_task(cls, cfg: MultilingualTranslationConfig, **kwargs):
+    def setup_task(cls, cfg: NewMultilingualTranslationConfig, **kwargs):
         """Setup the task (e.g., load dictionaries).
 
         Args:
