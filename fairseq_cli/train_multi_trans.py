@@ -46,7 +46,7 @@ logger = logging.getLogger("fairseq_cli.train")
 
 
 starting_pair_ratio = {"en-zh": 2513.6, "zh-en": 2513.6, "en-de": 456.2, "de-en": 456.2, "en-fr": 4084.2,
-                       "fr-en": 4084.2}
+                       "fr-en": 4084.2, "en-ro": 62.2, "ro-en": 62.2, "en-ru": 258.9, "ru-en": 258.9}
 
 
 def get_ratio_list(starting_ratio_list, T):

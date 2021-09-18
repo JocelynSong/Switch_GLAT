@@ -25,7 +25,7 @@ local_checkpoint_path=${output_path}/save_model
 
 # remote model saving path
 hdfs_checkpoint_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_ten
-remote_checkpoint_path=${hdfs_checkpoint_path}/good_diffusion_ten_model_v2
+remote_checkpoint_path=${hdfs_checkpoint_path}/good_diffusion_ten_model_v3_new_interval4
 mkdir -p ${local_checkpoint_path}
 hadoop fs -mkdir -p ${hdfs_checkpoint_path}
 hadoop fs -mkdir -p ${remote_checkpoint_path}

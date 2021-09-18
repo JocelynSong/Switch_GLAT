@@ -304,13 +304,12 @@ def main(cfg: FairseqConfig) -> None:
     best_valid_bleu['avg'] = -1
     pair_list = cfg.task.mt_steps.split(",")
 
-    ratio_list_level1 = None
-    # ratio_list_level2 = [0.0833, 0.0833, 0.1612, 0.1612, 0.0461, 0.0461, 0.0703, 0.0703, 0.1391, 0.1391]
     sample_pair_list = [starting_pair_ratio[k] for k in pair_list]
-    ratio_list_level2 = [k / sum(sample_pair_list) for k in sample_pair_list]
-    ratio_list_level2 = get_ratio_list(ratio_list_level2, 3.33)
+    ratio_list_level = [k / sum(sample_pair_list) for k in sample_pair_list]
+    ratio_list_level1 = get_ratio_list(ratio_list_level, 5)
+    ratio_list_level2 = get_ratio_list(ratio_list_level, 3.33)
 
-    diffusion_rate = ["rate0.2", "rate0.3", "rate0.4", "rate0.5"]
+    diffusion_rate = ["rate0.2", "rate0.3", "rate0.4"]   # can't be larger than 0.5
     diffused_epoch_itr, diffused_iter_dict = {}, {}
     schedule_epoch = 0
     lazy_load_epoch = 0
@@ -374,14 +373,17 @@ def main(cfg: FairseqConfig) -> None:
 
         # load diffusion data
         if schedule_epoch % cfg.task.diffusion_generation_interval == 0:
-            index = int(schedule_epoch / cfg.task.diffusion_generation_interval) % 4
+            index = int(schedule_epoch / cfg.task.diffusion_generation_interval) % 3
             diffusion_path = os.path.join(cfg.task.diffusion_data_path, diffusion_rate[index],
                                           "rank{}".format(local_rank))
             diffused_epoch_itr, diffused_iter_dict = get_diffused_iter_dict(cfg, task, model, epoch_itr["epoch"], update_freq,
                                                                             diffusion_path)
 
         # set sampling ratio
-        ratio_list = ratio_list_level2
+        if schedule_epoch < 50:
+            ratio_list = ratio_list_level1
+        else:
+            ratio_list = ratio_list_level2
 
         # train for one epoch
         valid_losses, should_stop, best_valid_bleu = train(cfg, trainer, task, epoch_itr, iter_dict, pair_list,

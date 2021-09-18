@@ -2,14 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/fairseq_cli/train_multi_trans.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tokenize_bleu.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq/models/mutllingual_transformer_new.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/models/mutllingual_transformer_new.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq/tasks/multilingual_translation_new.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/tasks/multilingual_translation_new.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq_cli/generate.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/generate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq_cli/generate_mglat.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/generate_mglat.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_multi_transformer.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_multi_transformer.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_multi_transformer_en_de_fr.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_multi_transformer_en_de_fr.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_multi_transformer_en_fr_zh.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_multi_transformer_en_fr_zh.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq_cli/train_mglat_diffusion.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/train_mglat_diffusion.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq_cli/train_multi_trans.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/train_multi_trans.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_mglat_diffusion.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_mglat_diffusion.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_mglat_diffusion_dict.sh" beforeDir="false" afterPath="$PROJECT_DIR$/running_bash/train_mglat_diffusion_dict.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_mglat_diffusion_dict_en_de_fr.sh" beforeDir="false" afterPath="$PROJECT_DIR$/running_bash/train_mglat_diffusion_dict_en_de_fr.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_mglat_diffusion_dict_en_fr_zh.sh" beforeDir="false" afterPath="$PROJECT_DIR$/running_bash/train_mglat_diffusion_dict_en_fr_zh.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_mglat_diffusion_nat.sh" beforeDir="false" afterPath="$PROJECT_DIR$/running_bash/train_mglat_diffusion_nat.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_mglat_diffusion_nat_en_de_fr.sh" beforeDir="false" afterPath="$PROJECT_DIR$/running_bash/train_mglat_diffusion_nat_en_de_fr.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_mglat_diffusion_nat_en_fr_zh.sh" beforeDir="false" afterPath="$PROJECT_DIR$/running_bash/train_mglat_diffusion_nat_en_fr_zh.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_multi_transformer.sh" beforeDir="false" afterPath="$PROJECT_DIR$/running_bash/train_multi_transformer.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_multi_transformer_en_de_fr.sh" beforeDir="false" afterPath="$PROJECT_DIR$/running_bash/train_multi_transformer_en_de_fr.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_multi_transformer_en_fr_zh.sh" beforeDir="false" afterPath="$PROJECT_DIR$/running_bash/train_multi_transformer_en_fr_zh.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_multiligual_nat.sh" beforeDir="false" afterPath="$PROJECT_DIR$/running_bash/train_multiligual_nat.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_transformer.sh" beforeDir="false" afterPath="$PROJECT_DIR$/running_bash/train_transformer.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -47,6 +58,9 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/running_bash" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/fairseq_cli" />
       <recent name="$PROJECT_DIR$" />
@@ -157,7 +171,7 @@
       <workItem from="1629771458433" duration="9882000" />
       <workItem from="1630072554935" duration="33042000" />
       <workItem from="1631081730972" duration="598000" />
-      <workItem from="1631236833221" duration="26360000" />
+      <workItem from="1631236833221" duration="41855000" />
     </task>
     <servers />
   </component>

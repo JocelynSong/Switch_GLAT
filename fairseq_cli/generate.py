@@ -103,7 +103,10 @@ def _main(cfg: DictConfig, output_file):
     )
 
     # loading the dataset should happen after the checkpoint has been loaded so we can give it the saved task config
-    task.load_dataset(cfg.dataset.gen_subset, task_cfg=saved_cfg.task)
+    pair = cfg.task.mt_steps.split(",")[0]
+    langs = pair.split("-")
+    src_lang, tgt_lang = langs[0].strip(), langs[1].strip()
+    task.load_para_dataset(cfg.dataset.gen_subset, pair, epoch=1)
 
     if cfg.generation.lm_path is not None:
         overrides["data"] = cfg.task.data
@@ -139,7 +142,7 @@ def _main(cfg: DictConfig, output_file):
 
     # Load dataset (possibly sharded)
     itr = task.get_batch_iterator(
-        dataset=task.dataset(cfg.dataset.gen_subset),
+        dataset=task.get_dataset(cfg.dataset.gen_subset, pair),
         max_tokens=cfg.dataset.max_tokens,
         max_sentences=cfg.dataset.batch_size,
         max_positions=utils.resolve_max_positions(
@@ -204,6 +207,8 @@ def _main(cfg: DictConfig, output_file):
             sample,
             prefix_tokens=prefix_tokens,
             constraints=constraints,
+            src_lang=src_lang,
+            tgt_lang=tgt_lang
         )
         num_generated_tokens = sum(len(h[0]["tokens"]) for h in hypos)
         gen_timer.stop(num_generated_tokens)

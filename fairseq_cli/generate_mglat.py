@@ -57,6 +57,13 @@ def get_symbols_to_strip_from_output(generator):
         return {generator.eos}
 
 
+def write_file(output_path, lines):
+    fw = open(output_path, "w", encoding="utf-8")
+    for line in lines:
+        fw.write(line + "\n")
+    fw.close()
+
+
 def _main(cfg: DictConfig, output_file):
     refs, gens = [], []
 
@@ -407,6 +414,13 @@ def _main(cfg: DictConfig, output_file):
         score = eval_score.score
         print('| Generate {} with beam={}: BLEU4 = {:2.2f}, '.format(cfg.dataset.gen_subset, cfg.generation.beam,
                                                                      score))
+
+        ref_file = os.path.join(cfg.common_eval.results_path, "{}-{}.ref.txt".format(cfg.task.source_lang,
+                                                                                     cfg.task.target_lang))
+        hypo_file = os.path.join(cfg.common_eval.results_path, "{}-{}.hypo.txt".format(cfg.task.source_lang,
+                                                                                      cfg.task.target_lang))
+        write_file(ref_file, refs)
+        write_file(hypo_file, gens)
 
     return scorer
 
