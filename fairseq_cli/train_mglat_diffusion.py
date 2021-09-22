@@ -380,7 +380,7 @@ def main(cfg: FairseqConfig) -> None:
                                                                             diffusion_path)
 
         # set sampling ratio
-        if schedule_epoch < 50:
+        if schedule_epoch < 100:
             ratio_list = ratio_list_level1
         else:
             ratio_list = ratio_list_level2
