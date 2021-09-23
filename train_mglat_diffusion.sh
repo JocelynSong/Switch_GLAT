@@ -25,7 +25,7 @@ local_checkpoint_path=${output_path}/save_model
 
 # remote model saving path
 hdfs_checkpoint_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_ten
-remote_checkpoint_path=${hdfs_checkpoint_path}/good_diffusion_ten_model_v3_old_interval3_prefix100
+remote_checkpoint_path=${hdfs_checkpoint_path}/good_diffusion_ten_model_v3_old_interval4_bk_sample
 mkdir -p ${local_checkpoint_path}
 hadoop fs -mkdir -p ${hdfs_checkpoint_path}
 hadoop fs -mkdir -p ${remote_checkpoint_path}
@@ -93,14 +93,14 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --diffusion-generation-interval 10 \
 --diffusion-interval 5 \
 --diffusion-num 300000 \
---diffusion-steps "de-en-zh,en-de-fr,en-fr-ro,en-ro-ru,en-ru-zh,en-zh-de,fr-en-de,ro-en-fr,ru-en-ro,zh-en-ru" \
+--diffusion-steps "de-en-fr,fr-en-ro,ru-en-fr,ro-en-fr,zh-en-ro" \
 --diffusion-percentage 0.4 \
 --diffusion-max-sentence 8 \
 --diffusion-length-beam 1 \
 --enable-back-translation \
 --back-translation-steps "de-en,en-de,en-fr,fr-en,en-ro,ro-en,en-ru,ru-en,en-zh,zh-en" \
 --back-translation-path ${back_trans_data_path} \
---back-translation-interval 3 \
+--back-translation-interval 4 \
 --enable-lazy-loader \
 --buffer-size 500000 \
 --lazy-load-interval 30

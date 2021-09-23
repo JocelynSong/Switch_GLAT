@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/downstream_tasks/sentence_retrieval.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/downstream_tasks/word_induction.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fairseq_cli/train_mglat_diffusion.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/train_mglat_diffusion.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_mglat_diffusion.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_mglat_diffusion.sh" afterDir="false" />
@@ -155,7 +157,7 @@
       <workItem from="1629771458433" duration="9882000" />
       <workItem from="1630072554935" duration="33042000" />
       <workItem from="1631081730972" duration="598000" />
-      <workItem from="1631236833221" duration="44633000" />
+      <workItem from="1631236833221" duration="52188000" />
     </task>
     <servers />
   </component>

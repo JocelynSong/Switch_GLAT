@@ -502,7 +502,11 @@ def train(
             src_lang = diffusion_src
             tgt_lang = diffusion_tgt
         elif cfg.task.enable_back_translation and trainer.step_size % cfg.task.back_translation_interval == 0:
-            pair = random.choice(back_translation_steps)
+            # pair = random.choice(back_translation_steps)
+            if ratio_list is not None:
+                pair = np.random.choice(back_translation_steps, 1, p=ratio_list)[0]
+            else:
+                pair = random.choice(back_translation_steps)
             langs = pair.split("-")
             src_lang, tgt_lang = langs[0].strip(), langs[1].strip()
             try:
