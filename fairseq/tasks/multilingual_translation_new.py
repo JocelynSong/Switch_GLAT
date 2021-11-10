@@ -250,9 +250,57 @@ class NewMultilingualTranslationConfig(FairseqDataclass):
         default="de-en,en-de,fr-en,en-fr",
         metadata={"help": "multilingual machine translation steps"}
     )
+    diffusion_num: int = field(
+        default=300000,
+        metadata={"help": "the number of generated diffusion data"}
+    )
+    diffusion_steps: str = field(
+        default="de-en-fr",
+        metadata={"help": "diffusion steps for the second stage training"}
+    )
+    diffusion_percentage: float = field(
+        default=0.1,
+        metadata={"help": "masked rate for the diffused words"}
+    )
+    diffusion_max_sentence: int = field(
+        default=8,
+        metadata={"help": "batch size for generating diffusion sentence"}
+    )
+    diffusion_length_beam: int = field(
+        default=5,
+        metadata={"help": "length beam for generating diffusion sentence"}
+    )
+    output_translation_path: str = field(
+        default="",
+        metadata={"help": "output path for generated diffusion data"}
+    )
+    hdfs_save_path: str = field(
+        default="",
+        metadata={"help": "Saved hdfs path for generated diffusion data"}
+    )
+    diffusion_data_path: str = field(
+        default="",
+        metadata={"help": "Data path for diffusion data"}
+    )
+    diffusion_generation_interval: int = field(
+        default=50,
+        metadata={"help": "Frequency for changing a diffusion data split with a different diffusion rsate"}
+    )
+    diffusion_interval: int = field(
+        default=5,
+        metadata={"help": "train a duffusion step every N steps"}
+    )
     enable_lazy_loader: bool = field(
         default=False,
         metadata={"help": "whether use the lazy data loader"}
+    )
+    buffer_size: int = field(
+        default=1000000,
+        metadata={"help": "buffer size for using lazy data loader"}
+    )
+    lazy_load_interval: int = field(
+        default=30,
+        metadata={"help": "interval for loading another buffered data"}
     )
 
 
@@ -279,6 +327,7 @@ class NewMultilingualTranslationTask(FairseqTask):
         self.tgt_dict = tgt_dict
         self.datasets["para"] = dict()
         self.datasets["para"]["train"], self.datasets["para"]["valid"], self.datasets["para"]["test"] = {}, {}, {}
+        self.datasets["diffusion"], self.datasets["back_trans"] = {}, {}
         # data iterators
         self.iterator = {}
 
@@ -545,6 +594,23 @@ class NewMultilingualTranslationTask(FairseqTask):
         if not isinstance(self.datasets["para"][split][pair], FairseqDataset):
             raise TypeError('Datasets are expected to be of type FairseqDataset')
         return self.datasets["para"][split][pair]
+
+    def get_diffusion_dataset(self, diffusion_step):
+        """
+        Return a loaded diffusion dataset split.
+
+        Args:
+            diffusion_step: specific diffusion data to load
+
+        Returns:
+            a :class:`~fairseq.data.FairseqDataset` corresponding to *split*
+        """
+        from fairseq.data import FairseqDataset
+        if diffusion_step not in self.datasets["diffusion"]:
+            raise KeyError('{} Dataset not loaded: {}'.format("diffusion", diffusion_step))
+        if not isinstance(self.datasets["diffusion"][diffusion_step], FairseqDataset):
+            raise TypeError('Datasets are expected to be of type FairseqDataset')
+        return self.datasets["diffusion"][diffusion_step]
 
     def build_dataset_for_inference(self, src_tokens, src_lengths, constraints=None):
         return LanguagePairDataset(
