@@ -12,6 +12,7 @@ pip install sacremoses
 
 # Download and prepare the data
 data_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/total_data/wmt_en_de_fr_ro_ru_zh
+local_dataset_path=${data_path}
 
 local_root=.
 output_path=${local_root}/output
@@ -28,28 +29,30 @@ export NCCL_IB_HCA=$ARNOLD_RDMA_DEVICE:1
 export NCCL_IB_GID_INDEX=3
 export NCCL_SOCKET_IFNAME=eth0
 python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes=$ARNOLD_NUM  --node_rank=$ARNOLD_ID \
---master_addr=$ARNOLD_WORKER_0_HOST --master_port=$ARNOLD_WORKER_0_PORT fairseq_cli/train.py ${data_path} \
+--master_addr=$ARNOLD_WORKER_0_HOST --master_port=$ARNOLD_WORKER_0_PORT fairseq_cli/train_multi_trans.py ${local_dataset_path} \
 --save-dir ${local_checkpoint_path} \
 --remote-save-dir ${remote_checkpoint_path} \
---task translation \
---source-lang ${src} \
---target-lang ${tgt} \
+--task multilingual_translation_song \
+--lgs ${src}-${tgt} \
+--mt-steps ${src}-${tgt} \
+--metric-pair ${src}-${tgt} \
 --dataset-impl "raw" \
---criterion label_smoothed_cross_entropy --label-smoothing 0.1 \
---arch transformer_vaswani_wmt_en_fr_big \
+--criterion multilingual_label_smoothed_cross_entropy --label-smoothing 0.1 \
+--arch multilingual_transformer_song_big \
 --optimizer adam \
---adam-betas '(0.9, 0.98)' \
+--adam-betas '(0.9, 0.998)' --adam-eps 1e-6 \
 --clip-norm 0.1 \
 --lr 3e-4 \
 --lr-scheduler inverse_sqrt \
+--stop-min-lr 1e-9 \
 --warmup-updates 10000 \
+--warmup-init-lr 1e-7 \
 --dropout 0.3 \
 --weight-decay 0.01 \
---criterion label_smoothed_cross_entropy \
---label-smoothing 0.1 \
 --max-tokens 2048 \
 --update-freq 4 \
 --max-update 400000 \
+--max-epoch 300 \
 --fp16 \
 --valid-subset valid \
 --max-sentences-valid 8 \
@@ -61,7 +64,6 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --keep-interval-updates	10 \
 --log-interval 10 \
 --eval-bleu \
---eval-bleu-args '{"beam": 1, "max_len_a": 1.0, "max_len_b": 200}' \
 --eval-bleu-detok space \
 --eval-bleu-remove-bpe \
 --eval-bleu-print-samples \
