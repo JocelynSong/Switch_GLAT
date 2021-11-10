@@ -526,6 +526,9 @@ def validate(
                 if cfg.dataset.max_valid_steps is not None and i > cfg.dataset.max_valid_steps:
                     break
 
+                # don't need to print so many samples
+                task.cfg.eval_bleu_print_samples = i <= 20
+
                 sample["src_lang"] = src_lang
                 sample["tgt_lang"] = tgt_lang
                 trainer.valid_step(sample)

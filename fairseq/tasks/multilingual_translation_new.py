@@ -25,6 +25,7 @@ from fairseq.data import (
     data_utils,
     encoders,
     indexed_dataset,
+    IndexedRawTextDataset
 )
 from fairseq.data.indexed_dataset import get_available_dataset_impl
 from fairseq.dataclass import ChoiceEnum, FairseqDataclass
@@ -389,6 +390,34 @@ class NewMultilingualTranslationTask(FairseqTask):
             buffer_size=buffer_size,
             enable_lazy_load=enable_lazy_load
         )
+
+    def load_diffusion_dataset(self, diffusion_path, diffusion_step):
+        """
+        Load a given dataset split.
+
+        Args:
+             diffusion_path(str): path of back-translation data
+             diffusion_step:
+        """
+        def get_indexed_dataset(path, dictionary):
+            return IndexedRawTextDataset(path, dictionary)
+
+        prefix = os.path.join(diffusion_path, "diffusion.{}.".format(diffusion_step))
+        src_dataset = get_indexed_dataset(prefix + "src.pth", self.src_dict)
+        tgt_dataset = get_indexed_dataset(prefix + "tgt.pth", self.tgt_dict)
+
+        logger.info("loading diffusion data for step %s: %d" % (diffusion_step, len(src_dataset)))
+
+        self.datasets["diffusion"][diffusion_step] = LanguagePairDataset(
+            src_dataset,
+            src_dataset.sizes,
+            self.src_dict,
+            tgt_dataset,
+            tgt_dataset.sizes,
+            self.tgt_dict,
+            left_pad_source=self.cfg.left_pad_source,
+            left_pad_target=self.cfg.left_pad_target,
+            shuffle=True)
 
     def load_dataset(self, split, epoch=1, combine=False, **kwargs):
         """Load a given dataset split.

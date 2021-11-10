@@ -2,15 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/downstream_tasks/get_visualize_embedding.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/downstream_tasks/visualization.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/downstream_tasks/visualization_point.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fairseq_cli/train_multi_trans_diffusion.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/train_multi_transformer_diffusion.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/train_multi_transformer_diffusion_en_de_fr.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/train_multi_transformer_diffusion_en_fr_zh.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/train_mglat_big.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq/models/multilingual_glat.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/models/multilingual_glat.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fairseq/tasks/multilingual_translation_new.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/tasks/multilingual_translation_new.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -169,7 +165,7 @@
       <workItem from="1634136834891" duration="242000" />
       <workItem from="1634379445792" duration="467000" />
       <workItem from="1635213946875" duration="490000" />
-      <workItem from="1636448345959" duration="4511000" />
+      <workItem from="1636448345959" duration="7402000" />
     </task>
     <servers />
   </component>
