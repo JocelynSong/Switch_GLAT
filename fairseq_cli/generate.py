@@ -1,4 +1,5 @@
 #!/usr/bin/env python3 -u
+#!/usr/bin/env python3 -u
 # Copyright (c) Facebook, Inc. and its affiliates.
 #
 # This source code is licensed under the MIT license found in the
@@ -22,6 +23,13 @@ from fairseq.dataclass.utils import convert_namespace_to_omegaconf
 from fairseq.logging import progress_bar
 from fairseq.logging.meters import StopwatchMeter, TimeMeter
 from omegaconf import DictConfig
+
+
+def write_file(output_path, lines):
+    fw = open(output_path, "w", encoding="utf-8")
+    for line in lines:
+        fw.write(line + "\n")
+    fw.close()
 
 
 def main(cfg: DictConfig):
@@ -57,6 +65,8 @@ def get_symbols_to_strip_from_output(generator):
 
 
 def _main(cfg: DictConfig, output_file):
+    srcs, gens = [], []
+
     logging.basicConfig(
         format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
@@ -254,6 +264,7 @@ def _main(cfg: DictConfig, output_file):
                     )
 
             src_str = decode_fn(src_str)
+            srcs.append(src_str)
             if has_target:
                 target_str = decode_fn(target_str)
 
@@ -274,6 +285,8 @@ def _main(cfg: DictConfig, output_file):
                     remove_bpe=cfg.common_eval.post_process,
                     extra_symbols_to_ignore=get_symbols_to_strip_from_output(generator),
                 )
+                if j == 0:
+                    gens.append(hypo_str)
                 detok_hypo_str = decode_fn(hypo_str)
                 if not cfg.common_eval.quiet:
                     score = hypo["score"] / math.log(2)  # convert to base 2
@@ -399,6 +412,11 @@ def _main(cfg: DictConfig, output_file):
             ),
             file=output_file,
         )
+        pair = "{}-{}".format(src_lang, tgt_lang)
+        src_file = os.path.join(cfg.common_eval.results_path, "train.{}.{}".format(pair, src_lang))
+        hypo_file = os.path.join(cfg.common_eval.results_path, "train.{}.{}".format(pair, tgt_lang))
+        write_file(src_file, srcs)
+        write_file(hypo_file, gens)
 
     return scorer
 

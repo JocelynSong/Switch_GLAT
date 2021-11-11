@@ -1199,6 +1199,8 @@ def base_architecture(args):
 
 @register_model_architecture("multilingual_transformer_song", "multilingual_transformer_song_big")
 def transformer_vaswani_wmt_en_de_big(args):
+    args.encoder_layers = getattr(args, "encoder_layers", 12)
+    args.decoder_layers = getattr(args, "decoder_layers", 12)
     args.encoder_embed_dim = getattr(args, "encoder_embed_dim", 1024)
     args.encoder_ffn_embed_dim = getattr(args, "encoder_ffn_embed_dim", 4096)
     args.encoder_attention_heads = getattr(args, "encoder_attention_heads", 16)
