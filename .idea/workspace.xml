@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/train_mglat_ted.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tokenize.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/train_mglat_diffusion_ted.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq/models/mutllingual_transformer_new.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq/models/mutllingual_transformer_new.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq_cli/generate.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/generate.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate.sh" beforeDir="false" afterPath="$PROJECT_DIR$/generate.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_mglat_big.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_mglat_big.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -166,7 +165,7 @@
       <workItem from="1634379445792" duration="467000" />
       <workItem from="1635213946875" duration="490000" />
       <workItem from="1636448345959" duration="14211000" />
-      <workItem from="1636596165430" duration="3543000" />
+      <workItem from="1636596165430" duration="8531000" />
     </task>
     <servers />
   </component>

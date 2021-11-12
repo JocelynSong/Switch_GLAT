@@ -20,6 +20,7 @@ remote_checkpoint_path=${hdfs_checkpoint_path}/wmt_ten_big
 mkdir -p ${local_checkpoint_path}
 hadoop fs -mkdir -p ${hdfs_checkpoint_path}
 hadoop fs -mkdir -p ${remote_checkpoint_path}
+hadoop fs -get ${remote_checkpoint_path}/checkpoint_last.pt ${local_checkpoint_path}
 
 export NCCL_IB_DISABLE=0
 export NCCL_IB_HCA=$ARNOLD_RDMA_DEVICE:1
@@ -29,6 +30,7 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --master_addr=$ARNOLD_WORKER_0_HOST --master_port=$ARNOLD_WORKER_0_PORT fairseq_cli/train_mglat.py ${local_dataset_path} \
 --save-dir ${local_checkpoint_path} \
 --remote-save-dir ${remote_checkpoint_path} \
+--restore-file ${local_checkpoint_path}/checkpoint_last.pt \
 --task multilingual_glat_translation \
 --lgs "de-en-fr-ro-ru-zh" \
 --mt-steps "de-en,en-de,en-fr,fr-en,en-ro,ro-en,en-ru,ru-en,en-zh,zh-en" \
