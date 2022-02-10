@@ -43,13 +43,13 @@ python3 -m torch.distributed.launch --nproc_per_node=$ARNOLD_WORKER_GPU --nnodes
 --lr 5e-4 \
 --lr-scheduler inverse_sqrt \
 --warmup-updates 4000 \
---dropout 0.1 \
+--dropout 0.3 \
 --weight-decay 0.01 \
 --criterion label_smoothed_cross_entropy \
 --label-smoothing 0.1 \
 --max-tokens 8192 \
 --update-freq 1 \
---max-update 600000 \
+--max-update 100000 \
 --fp16 \
 --valid-subset valid \
 --max-sentences-valid 8 \

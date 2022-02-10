@@ -2,16 +2,32 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/train_glat_ted.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/train_mglat_diffusion_big.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/new_fairseq.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/new_fairseq.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" beforeDir="false" afterPath="$PROJECT_DIR$/fairseq_cli/train_mglat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_trans_big_ten.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_trans_big_ten.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/downstream_tasks/visualization_point.py" beforeDir="false" afterPath="$PROJECT_DIR$/downstream_tasks/visualization_point.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/running_bash/train_transformer.sh" beforeDir="false" afterPath="$PROJECT_DIR$/running_bash/train_transformer.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -67,7 +83,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.trainer">
+  <component name="RunManager" selected="Python.visualization_point">
     <configuration name="trainer" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="new_fairseq" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -112,8 +128,54 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="visualization" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="new_fairseq" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/downstream_tasks" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/downstream_tasks/visualization.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="visualization_point" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="new_fairseq" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/downstream_tasks" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/downstream_tasks/visualization_point.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.visualization_point" />
+        <item itemvalue="Python.visualization" />
         <item itemvalue="Python.trainer" />
         <item itemvalue="Python.translation" />
       </list>
@@ -166,7 +228,15 @@
       <workItem from="1635213946875" duration="490000" />
       <workItem from="1636448345959" duration="14211000" />
       <workItem from="1636596165430" duration="11018000" />
-      <workItem from="1636941442279" duration="2022000" />
+      <workItem from="1636941442279" duration="6695000" />
+      <workItem from="1637287392060" duration="611000" />
+      <workItem from="1637719081589" duration="2675000" />
+      <workItem from="1638152523065" duration="158000" />
+      <workItem from="1639550379078" duration="28000" />
+      <workItem from="1640057110143" duration="15000" />
+      <workItem from="1641365139911" duration="75000" />
+      <workItem from="1641639715086" duration="1209000" />
+      <workItem from="1644481908895" duration="346000" />
     </task>
     <servers />
   </component>
@@ -187,7 +257,9 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/better_mglat$visualization_point.coverage" NAME="visualization_point Coverage Results" MODIFIED="1636981539794" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/downstream_tasks" />
     <SUITE FILE_PATH="coverage/better_mglat$translation.coverage" NAME="translation Coverage Results" MODIFIED="1629428124585" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/fairseq/tasks" />
     <SUITE FILE_PATH="coverage/better_mglat$trainer.coverage" NAME="trainer Coverage Results" MODIFIED="1630318227826" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/fairseq" />
+    <SUITE FILE_PATH="coverage/better_mglat$visualization.coverage" NAME="visualization Coverage Results" MODIFIED="1636980247834" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/downstream_tasks" />
   </component>
 </project>

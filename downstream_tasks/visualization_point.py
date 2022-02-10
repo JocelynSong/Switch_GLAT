@@ -16,7 +16,7 @@ from sklearn import manifold
 def read_freq_words(filename):
     freq_words = []
     f = open(filename, "r", encoding="utf-8")
-    for line in f.readlines()[3000: 6000]:
+    for line in f.readlines()[6000: 9000]:
         freq_words.append(line.strip())
     return freq_words
 
@@ -179,10 +179,18 @@ def main():
     #                "service", "human", "debate", "proposal"]
     good_words = []
     length = len(features)
-    for i, word in enumerate(tar_words):
+    for i, word in enumerate(tar_words[: 2000]):
         labels.append(word)
         features.append(tar_freq_emb[i])
-        # features.append(src_freq_emb[i] + 0.5)
+        # features.append(src_freq_emb[i] + 0.03)
+        # if src_words[i] in bad_words:
+        #     features.append(tar_freq_emb[i])
+        # else:
+        #     features.append(src_freq_emb[i] + 0.01)
+    for i, word in enumerate(tar_words[2000: ]):
+        labels.append(word)
+        # features.append(tar_freq_emb[i])
+        features.append(src_freq_emb[i+2000] + 0.1)
         # if src_words[i] in bad_words:
         #     features.append(tar_freq_emb[i])
         # else:
