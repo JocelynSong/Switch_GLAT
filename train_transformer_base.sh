@@ -17,7 +17,7 @@ local_root=.
 output_path=${local_root}/output
 mkdir -p ${output_path}
 local_checkpoint_path=${output_path}/save_model
-hdfs_checkpoint_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_ten/transformer_big
+hdfs_checkpoint_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_ten/transformer_base
 remote_checkpoint_path=${hdfs_checkpoint_path}/${src}_${tgt}
 mkdir -p ${local_checkpoint_path}
 hadoop fs -mkdir -p ${hdfs_checkpoint_path}
@@ -34,7 +34,7 @@ args=(
   --metric-pair ${src}-${tgt}
   --dataset-impl "raw"
   --criterion multilingual_label_smoothed_cross_entropy --label-smoothing 0.1
-  --arch multilingual_transformer_song_wider
+  --arch multilingual_transformer_song_base
   --optimizer adam
   --adam-betas '(0.9, 0.998)' --adam-eps 1e-6
   --clip-norm 2
@@ -43,12 +43,12 @@ args=(
   --stop-min-lr 1e-9
   --warmup-updates 4000
   --warmup-init-lr 1e-7
-  --dropout 0.3
+  --dropout 0.1
   --weight-decay 0.01
-  --max-tokens 4096
-  --update-freq 2
-  --max-update 400000
-  --max-epoch 1600
+  --max-tokens 8192
+  --update-freq 1
+  --max-update 100000
+  --max-epoch 350
   --fp16
   --valid-subset valid
   --max-sentences-valid 8
