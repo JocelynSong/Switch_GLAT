@@ -22,12 +22,14 @@ remote_checkpoint_path=${hdfs_checkpoint_path}/${src}_${tgt}
 mkdir -p ${local_checkpoint_path}
 hadoop fs -mkdir -p ${hdfs_checkpoint_path}
 hadoop fs -mkdir -p ${remote_checkpoint_path}
+hadoop fs -get ${remote_checkpoint_path}/checkpoint_last.pt ${local_checkpoint_path}
 
 
 args=(
   ${local_dataset_path}
   --save-dir ${local_checkpoint_path}
   --remote-save-dir ${remote_checkpoint_path}
+  --restore-file ${local_checkpoint_path}/checkpoint_last.pt
   --task multilingual_translation_song
   --lgs ${src}-${tgt}
   --mt-steps ${src}-${tgt}
