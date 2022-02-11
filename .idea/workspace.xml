@@ -4,7 +4,6 @@
     <list default="true" id="31d11aab-a340-44ef-b2a3-eab768b07bb2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_transformer_base.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_transformer_base.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_transformer_big.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train_transformer_big.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -233,7 +232,7 @@
       <workItem from="1640057110143" duration="15000" />
       <workItem from="1641365139911" duration="75000" />
       <workItem from="1641639715086" duration="1209000" />
-      <workItem from="1644481908895" duration="5160000" />
+      <workItem from="1644481908895" duration="6223000" />
     </task>
     <servers />
   </component>

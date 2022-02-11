@@ -50,7 +50,7 @@ args=(
   --max-tokens 8192
   --update-freq 1
   --max-update 100000
-  --max-epoch 350
+  --max-epoch 10000000
   --fp16
   --valid-subset valid
   --max-sentences-valid 8
