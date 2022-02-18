@@ -65,7 +65,7 @@ def get_symbols_to_strip_from_output(generator):
 
 
 def _main(cfg: DictConfig, output_file):
-    srcs, gens = [], []
+    # srcs, gens = [], []
 
     logging.basicConfig(
         format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
@@ -118,6 +118,12 @@ def _main(cfg: DictConfig, output_file):
     src_lang, tgt_lang = langs[0].strip(), langs[1].strip()
     task.load_para_dataset(cfg.dataset.gen_subset, pair, epoch=1)
 
+    pair = "{}-{}".format(src_lang, tgt_lang)
+    src_file = os.path.join(cfg.common_eval.results_path, "train.{}.{}".format(pair, src_lang))
+    hypo_file = os.path.join(cfg.common_eval.results_path, "train.{}.{}".format(pair, tgt_lang))
+    fw_src = open(src_file, "w", encoding="utf-8")
+    fw_hypo = open(hypo_file, "w", encoding="utf-8")
+
     if cfg.generation.lm_path is not None:
         overrides["data"] = cfg.task.data
 
@@ -165,7 +171,7 @@ def _main(cfg: DictConfig, output_file):
         shard_id=cfg.distributed_training.distributed_rank,
         num_workers=cfg.dataset.num_workers,
         data_buffer_size=cfg.dataset.data_buffer_size,
-    ).next_epoch_itr(shuffle=False)
+    ).next_epoch_itr(shuffle=True)
     progress = progress_bar.progress_bar(
         itr,
         log_format=cfg.common.log_format,
@@ -264,7 +270,9 @@ def _main(cfg: DictConfig, output_file):
                     )
 
             src_str = decode_fn(src_str)
-            srcs.append(src_str)
+            # srcs.append(src_str)
+            fw_src.write(src_str + "\n")
+
             if has_target:
                 target_str = decode_fn(target_str)
 
@@ -286,7 +294,9 @@ def _main(cfg: DictConfig, output_file):
                     extra_symbols_to_ignore=get_symbols_to_strip_from_output(generator),
                 )
                 if j == 0:
-                    gens.append(hypo_str)
+                    fw_hypo.write(hypo_str + "\n")
+                    # gens.append(hypo_str)
+
                 detok_hypo_str = decode_fn(hypo_str)
                 if not cfg.common_eval.quiet:
                     score = hypo["score"] / math.log(2)  # convert to base 2
@@ -412,11 +422,13 @@ def _main(cfg: DictConfig, output_file):
             ),
             file=output_file,
         )
-        pair = "{}-{}".format(src_lang, tgt_lang)
-        src_file = os.path.join(cfg.common_eval.results_path, "train.{}.{}".format(pair, src_lang))
-        hypo_file = os.path.join(cfg.common_eval.results_path, "train.{}.{}".format(pair, tgt_lang))
-        write_file(src_file, srcs)
-        write_file(hypo_file, gens)
+        # pair = "{}-{}".format(src_lang, tgt_lang)
+        # src_file = os.path.join(cfg.common_eval.results_path, "train.{}.{}".format(pair, src_lang))
+        # hypo_file = os.path.join(cfg.common_eval.results_path, "train.{}.{}".format(pair, tgt_lang))
+        # write_file(src_file, srcs)
+        # write_file(hypo_file, gens)
+        fw_src.close()
+        fw_hypo.close()
 
     return scorer
 
