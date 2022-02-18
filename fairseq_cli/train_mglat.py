@@ -229,7 +229,7 @@ def main(cfg: FairseqConfig) -> None:
             break
 
         # set sampling ratio
-        if epoch_itr["epoch"] < 200:
+        if epoch_itr["epoch"] < 100:
             ratio_list = ratio_list_level1
         else:
             ratio_list = ratio_list_level2
