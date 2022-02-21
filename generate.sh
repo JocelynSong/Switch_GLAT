@@ -21,7 +21,7 @@ python3 fairseq_cli/generate.py ${data_path} \
 --dataset-impl "raw" \
 --mt-steps ${src}-${tgt} \
 --path ${model_path}/checkpoint_best.pt \
---batch-size 128 \
+--batch-size 64 \
 --beam 5 \
 --nbest 5 \
 --max-len-a 1 \

@@ -24,7 +24,7 @@ local_checkpoint_path=${output_path}/save_model
 
 # remote model saving path
 hdfs_checkpoint_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_en_de_fr
-remote_checkpoint_path=${hdfs_checkpoint_path}/good_diffusion_model_final
+remote_checkpoint_path=${hdfs_checkpoint_path}/good_diffusion_model_final_wtbt
 mkdir -p ${local_checkpoint_path}
 hadoop fs -mkdir -p ${hdfs_checkpoint_path}
 hadoop fs -mkdir -p ${remote_checkpoint_path}
@@ -92,13 +92,6 @@ args=(
   --diffusion-percentage 0.4
   --diffusion-max-sentence 8
   --diffusion-length-beam 1
-  --enable-back-translation
-  --back-translation-steps "de-en,en-de,en-fr,fr-en"
-  --back-translation-path ${back_trans_data_path}
-  --back-translation-interval 4
-  --enable-lazy-loader
-  --buffer-size 1000000
-  --lazy-load-interval 30
 )
 
 dist-train-mglat-diffusion "${args[@]}"
