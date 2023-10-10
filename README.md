@@ -16,11 +16,12 @@ bash setup.sh
 Taking en-de-fr as an example, we can train the model via the following scripts:
 
 ```ruby
+bash tran_mglat_en_de_fr.sh
 bash train_mglat_diffuse_en_de_fr.sh
 ```
 
 <h2>Inference</h2>
-Taking en-de-fr as an example, we can generate translation via the following scripts:
+To generate translation, run the following code:
 
 ```ruby
 bash generate_mglat.sh
