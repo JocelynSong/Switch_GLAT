@@ -430,6 +430,9 @@ def _main(cfg: DictConfig, output_file):
         fw_src.close()
         fw_hypo.close()
 
+        os.system("hadoop fs -put -f {} {}".format(src_file, cfg.task.hdfs_save_path))
+        os.system("hadoop fs -put -f {} {}".format(hypo_file, cfg.task.hdfs_save_path))
+
     return scorer
 
 

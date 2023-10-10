@@ -1,12 +1,5 @@
 #!/bin/bash
 
-export http_proxy=http://lab_mt_caojun.sh:N92TPbyQoQfYkROb@10.124.155.170:8080
-export https_proxy=http://lab_mt_caojun.sh:N92TPbyQoQfYkROb@10.124.155.170:8080
-
-python3 setup.py build_ext --inplace
-pip3 install .
-pip3 install sacremoses
-
 src=$1
 tgt=$2
 
@@ -15,14 +8,11 @@ generation_path=./generation
 
 mkdir -p generation
 
-data_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/total_data/wmt_en_de_fr_ro_ru_zh/at_data/rank0
-remote_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/total_data/wmt_en_de_fr_ro_ru_zh/rank0
-hadoop fs -mkdir -p ${remote_path}
+data_path=None 
 
 model_path=./output
 mkdir -p $model_path
-remote_model_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/user/songzhenqiao/multilingual_glat/models/better_ten/many2many_all_shuffle/checkpoint_${src}-${tgt}_best.pt
-hadoop fs -get $remote_model_path $model_path
+remote_model_path=hdfs://haruna/home/byte_arnold_hl_mlnlc/models 
 
 python3 fairseq_cli/generate_mglat.py ${data_path} \
 --task "multilingual_glat_translation" \
@@ -41,8 +31,3 @@ python3 fairseq_cli/generate_mglat.py ${data_path} \
 --sacrebleu \
 --skip-invalid-size-inputs-valid-test \
 --remove-bpe
-
-
-# hadoop fs -put -f ${generation_path}/${src}-${tgt}.txt $remote_path
-# --path output/checkpoint_${src}-${tgt}_best.pt:at.pt \
-# --iter-decode-with-external-reranker \
