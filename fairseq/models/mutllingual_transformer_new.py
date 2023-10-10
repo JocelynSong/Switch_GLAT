@@ -398,7 +398,7 @@ class MultilingualTransformerEncoder(FairseqEncoder):
         self.id2lang = {k: v for k, v in enumerate(sorted(lgs))}
         self.lang2id = {k: v for v, k in self.id2lang.items()}
         self.n_langs = len(lgs)
-        self.lang_embeddings = LangEmbedding(self.n_langs, embed_dim)
+        # self.lang_embeddings = LangEmbedding(self.n_langs, embed_dim)
 
         if getattr(args, "layernorm_embedding", False):
             self.layernorm_embedding = LayerNorm(embed_dim)
@@ -456,8 +456,8 @@ class MultilingualTransformerEncoder(FairseqEncoder):
             x = embed + self.embed_positions(src_tokens)
         if src_lang is not None:
             src_langs = src_tokens.clone().fill_(self.lang2id[src_lang])
-            lang_embeds = self.lang_embeddings(src_langs)  # [batch, length, embedding]
-            x = x + lang_embeds
+            # lang_embeds = self.lang_embeddings(src_langs)  # [batch, length, embedding]
+            # x = x + lang_embeds
         if self.layernorm_embedding is not None:
             x = self.layernorm_embedding(x)
         x = self.dropout_module(x)

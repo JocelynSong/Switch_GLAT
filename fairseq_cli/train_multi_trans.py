@@ -211,6 +211,7 @@ def main(cfg: FairseqConfig) -> None:
     pair_list = cfg.task.mt_steps.split(",")
     for pair in pair_list:
         best_valid_bleu[pair] = 0
+    best_valid_bleu['avg'] = 0
 
     ratio_list_level1 = None
     # ratio_list_level2 = [0.0833, 0.0833, 0.1612, 0.1612, 0.0461, 0.0461, 0.0703, 0.0703, 0.1391, 0.1391]
@@ -228,10 +229,11 @@ def main(cfg: FairseqConfig) -> None:
             break
 
         # set sampling ratio
-        if epoch_itr["epoch"] < 200:
-            ratio_list = ratio_list_level1
-        else:
-            ratio_list = ratio_list_level2
+        # if epoch_itr["epoch"] < 200:
+        #     ratio_list = ratio_list_level1
+        # else:
+        #     ratio_list = ratio_list_level2
+        ratio_list = ratio_list_level2
         # current_t = min(3.33, 1.0 + (epoch_itr["epoch"] / 50.0) * 2.33)
         # ratio_list = get_ratio_list(starting_ratio_list, current_t)
 
@@ -280,7 +282,7 @@ def should_stop_early(cfg: DictConfig, valid_loss: float) -> bool:
     prev_best = getattr(should_stop_early, "best", None)
     if prev_best is None or is_better(valid_loss, prev_best):
         should_stop_early.best = valid_loss
-        should_stop_early.num_runs = 0
+        should_stop_early.num_runs = 1
         return False
     else:
         should_stop_early.num_runs += 1
@@ -314,11 +316,11 @@ def train(
 
     trainer.step_size = 0
     while trainer.step_size < cfg.dataset.validate_after_updates:
-        if ratio_list is not None:
-            pair = np.random.choice(pair_list, 1, p=ratio_list)[0]
-        else:
-            pair = random.choice(pair_list)
-        # pair = np.random.choice(pair_list, 1, p=ratio_list)[0]
+        # if ratio_list is not None:
+        #     pair = np.random.choice(pair_list, 1, p=ratio_list)[0]
+        # else:
+        #     pair = random.choice(pair_list)
+        pair = random.choice(pair_list)
         langs = pair.split("-")
         src_lang, tgt_lang = langs[0].strip(), langs[1].strip()
         try:
@@ -418,7 +420,7 @@ def validate_and_save(
         should_stop = True
         logger.info(
             f"Stopping training due to "
-            f"num_updates: {num_updates} >= max_update: {max_update}"
+            f"num_updates: {num_updates} >= max_update: 800000"
         )
 
     training_time_hours = trainer.cumulative_training_time() / (60 * 60)
@@ -438,14 +440,24 @@ def validate_and_save(
 
     # Validate
     valid_losses = dict()
+    total_bleu, avg_bleu = 0.0, 0.0
+
     if do_validate:
         valid_losses = validate(cfg, trainer, task, epoch_itr, valid_subsets, pair_list)
 
         for pair in pair_list:
+            total_bleu += valid_losses[pair]
             if valid_losses[pair] > best_valid_bleu[pair]:
                 best_valid_bleu[pair] = valid_losses[pair]
 
-    should_stop |= should_stop_early(cfg, valid_losses[cfg.task.metric_pair])
+        avg_bleu = total_bleu / len(pair_list)
+        valid_losses['avg'] = avg_bleu
+        if avg_bleu > best_valid_bleu['avg']:
+            best_valid_bleu['avg'] = avg_bleu
+
+    if should_stop_early(cfg, valid_losses[cfg.task.metric_pair]):
+        should_stop = True
+    avg_bleu = valid_losses[cfg.task.metric_pair]
 
     # Save checkpoint
     if do_save or should_stop:
@@ -455,6 +467,12 @@ def validate_and_save(
             checkpoint_utils.save_checkpoint_multilingual(cfg.checkpoint, trainer,
                                                           epoch_itr[("mt", src_lang, tgt_lang)],
                                                           valid_losses[pair], pair, epoch_itr["epoch"])
+        if cfg.task.metric_pair != "":
+            langs = cfg.task.metric_pair.split("-")
+            src_lang, tgt_lang = langs[0].strip(), langs[1].strip()
+            checkpoint_utils.save_checkpoint_multilingual(cfg.checkpoint, trainer,
+                                                          epoch_itr[("mt", src_lang, tgt_lang)],
+                                                          avg_bleu, 'avg', epoch_itr["epoch"])
 
     return valid_losses, should_stop, best_valid_bleu
 

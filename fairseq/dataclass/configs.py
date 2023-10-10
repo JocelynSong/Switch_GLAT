@@ -631,7 +631,17 @@ class CheckpointConfig(FairseqDataclass):
         },
     )
     patience: int = field(
-        default=-1,
+        default=5,
+        metadata={
+            "help": (
+                "early stop training if valid performance doesn't "
+                "improve for N consecutive validation runs; note "
+                "that this is influenced by --validate-interval"
+            )
+        },
+    )
+    training_patience: int = field(
+        default=500000,
         metadata={
             "help": (
                 "early stop training if valid performance doesn't "
